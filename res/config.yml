@@ -1,0 +1,23 @@
+enabled: true
+mark:
+  texture: INK_SACK:1
+  name: "&9Mark"
+  lore: "&e&oYou can mark your items and they do not drop when death"
+  text: "&9- Item is marked"
+
+##
+# Allowed and denied items
+# ------------------------------------------
+# You can use a range of values, eg 1-100
+# Also you can use item metadata (durability), eg 351#14
+##
+allowed:
+  - 256-258
+  - 267-279
+  - 283-286
+  - 290-294
+  - 298-317
+  - 346
+denied:
+  - 268-271
+  - 290

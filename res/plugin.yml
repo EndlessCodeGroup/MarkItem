@@ -1,0 +1,12 @@
+name: MarkItem
+version: 0.1
+description: Mark your items
+author: OsipXD
+
+main: ru.endlesscode.markitem.MarkItem
+
+commands:
+   markitem:
+      description: MarkItem command
+      usage: /<command>
+      permission: markitem.command
