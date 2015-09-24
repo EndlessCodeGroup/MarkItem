@@ -30,7 +30,7 @@ public class MarkItem extends JavaPlugin {
 
         if (!Config.getConfig().getBoolean("enabled")) {
             this.getLogger().warning("Plugin is not enabled!");
-            this.getPluginLoader().disablePlugin(this);
+            this.setEnabled(false);
             return;
         }
 

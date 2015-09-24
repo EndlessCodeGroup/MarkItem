@@ -11,10 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.misc.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -195,8 +192,6 @@ public class ItemMarker implements Listener {
                 } else {
                     event.getInventory().setResult(this.addMark(result));
                 }
-            } else {
-                event.getInventory().setResult(null);
             }
         }
     }
