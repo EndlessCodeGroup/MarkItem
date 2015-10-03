@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.endlesscode.markitem.misc.Config;
-import ru.endlesscode.markitem.misc.FakeEnchantment;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -23,7 +23,6 @@ import ru.endlesscode.markitem.misc.FakeEnchantment;
  */
 public class ItemMarker implements Listener {
     private final ItemStack mark;
-    private final FakeEnchantment ench = new FakeEnchantment(99);
     private int count = 0;
 
     public ItemMarker() {
@@ -47,7 +46,7 @@ public class ItemMarker implements Listener {
         Collections.addAll(lore, ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.lore")).split("\n"));
         im.setLore(lore);
         if (Config.getConfig().getBoolean("mark.glow", false)) {
-            im.addEnchant(ench, 1, false);
+            im.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
         }
         
         item.setItemMeta(im);
