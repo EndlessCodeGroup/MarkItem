@@ -1,6 +1,7 @@
 enabled: true
 mark:
   texture: INK_SACK:1
+  glow: false
   name: "&9Mark"
   lore: "&e&oYou can mark your items and they do not drop when death"
   text: "&9- Item is marked"

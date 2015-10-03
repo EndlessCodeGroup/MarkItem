@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.endlesscode.markitem.misc.Config;
+import ru.endlesscode.markitem.misc.FakeEnchantment;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -22,6 +23,7 @@ import ru.endlesscode.markitem.misc.Config;
  */
 public class ItemMarker implements Listener {
     private final ItemStack mark;
+    private final FakeEnchantment ench = new FakeEnchantment(99);
     private int count = 0;
 
     public ItemMarker() {
@@ -44,6 +46,10 @@ public class ItemMarker implements Listener {
         List<String> lore = new ArrayList<>();
         Collections.addAll(lore, ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.lore")).split("\n"));
         im.setLore(lore);
+        if (Config.getConfig().getBoolean("mark.glow", false)) {
+            im.addEnchant(ench, 1, false);
+        }
+        
         item.setItemMeta(im);
 
         this.mark = item;
