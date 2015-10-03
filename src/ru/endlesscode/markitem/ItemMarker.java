@@ -1,5 +1,10 @@
 package ru.endlesscode.markitem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -9,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import ru.endlesscode.markitem.misc.Config;
-
-import java.util.*;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -25,7 +28,7 @@ public class ItemMarker implements Listener {
         String[] textures = Config.getConfig().getString("mark.texture").split(":");
 
         if (Material.getMaterial(textures[0]) == null) {
-            MarkItem.getInstance().getLogger().warning("Material " + textures[0] + " not found");
+            MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} not found", textures[0]);
             this.mark = new ItemStack(Material.AIR);
             return;
         }
@@ -83,7 +86,7 @@ public class ItemMarker implements Listener {
             }
         }
 
-        MarkItem.getInstance().getLogger().info(this.count + " item(s) have been initialized");
+        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} item(s) have been initialized", this.count);
     }
 
     @SuppressWarnings("deprecation")
@@ -129,7 +132,7 @@ public class ItemMarker implements Listener {
     private ItemStack addMark(ItemStack item) {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
+            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
             lore.add(MarkItem.UNIQUE_MARK_TAG + ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
             im.setLore(lore);
             item.setItemMeta(im);
@@ -142,11 +145,14 @@ public class ItemMarker implements Listener {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.getLore();
-            lore.remove(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
+            for (String s : lore) {
+                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
+                    lore.remove(s);
+                }
+            }
             im.setLore(lore);
             item.setItemMeta(im);
         }
-
         return item;
     }
 
