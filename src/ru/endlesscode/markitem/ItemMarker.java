@@ -133,7 +133,7 @@ public class ItemMarker implements Listener {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            lore.add(MarkItem.UNIQUE_MARK_TAG + ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
+            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
             im.setLore(lore);
             item.setItemMeta(im);
         }
@@ -164,11 +164,32 @@ public class ItemMarker implements Listener {
                 }
             }
         }
+        return this.hasOldMark(item);
+    }
+    
+    public boolean hasOldMark(ItemStack item) {
+        if (item.getItemMeta().hasLore()) {
+            return item.getItemMeta().getLore().contains(this.getMarkText());
+        }
         return false;
+    }
+    
+    public ItemStack updateMark(ItemStack item) {
+        if (this.hasOldMark(item)) {
+            List<String> lore = item.getItemMeta().getLore();
+            lore.remove(this.getMarkText());
+            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
+            item.getItemMeta().setLore(lore);
+        }
+        return item;
     }
 
     public ItemStack getMark() {
         return this.mark;
+    }
+    
+    public String getMarkText() {
+        return ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text"));
     }
 
     @EventHandler
