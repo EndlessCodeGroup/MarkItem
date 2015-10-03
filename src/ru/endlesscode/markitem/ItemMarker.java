@@ -8,7 +8,6 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.misc.Config;
 
 import java.util.*;
@@ -88,7 +87,7 @@ public class ItemMarker implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    private boolean isDenied(@NotNull ItemStack item) {
+    private boolean isDenied(ItemStack item) {
         List<String> deniedList = Config.getConfig().getStringList("denied");
         for (String denied : deniedList) {
             if (denied.contains("-")) {
@@ -119,7 +118,7 @@ public class ItemMarker implements Listener {
         return false;
     }
 
-    private void addRecipe(@NotNull ItemStack item) {
+    private void addRecipe(ItemStack item) {
         this.count++;
         ShapelessRecipe recipe = new ShapelessRecipe(item);
         recipe.addIngredient(item.getData());
@@ -127,8 +126,7 @@ public class ItemMarker implements Listener {
         MarkItem.getInstance().getServer().addRecipe(recipe);
     }
 
-    @NotNull
-    private ItemStack addMark(@NotNull ItemStack item) {
+    private ItemStack addMark(ItemStack item) {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
@@ -155,7 +153,7 @@ public class ItemMarker implements Listener {
 //    }
 // --Commented out by Inspection STOP (12.09.2015 14:03)
 
-    public boolean hasMark(@NotNull ItemStack item) {
+    public boolean hasMark(ItemStack item) {
         if (item.hasItemMeta()) if (item.getItemMeta().hasLore()) {
             if (item.getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")))) {
                 return true;
