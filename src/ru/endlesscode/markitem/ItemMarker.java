@@ -130,7 +130,7 @@ public class ItemMarker implements Listener {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
-            lore.add(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
+            lore.add(MarkItem.UNIQUE_MARK_TAG + ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
             im.setLore(lore);
             item.setItemMeta(im);
         }
@@ -138,28 +138,26 @@ public class ItemMarker implements Listener {
         return item;
     }
 
-// --Commented out by Inspection START (12.09.2015 14:03):
-//    @NotNull
-//    public ItemStack removeMark(@NotNull ItemStack item) {
-//        if (!this.hasMark(item)) {
-//            ItemMeta im = item.getItemMeta();
-//            List<String> lore = im.getLore();
-//            lore.remove(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
-//            im.setLore(lore);
-//            item.setItemMeta(im);
-//        }
-//
-//        return item;
-//    }
-// --Commented out by Inspection STOP (12.09.2015 14:03)
-
-    public boolean hasMark(ItemStack item) {
-        if (item.hasItemMeta()) if (item.getItemMeta().hasLore()) {
-            if (item.getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")))) {
-                return true;
-            }
+    public ItemStack removeMark(ItemStack item) {
+        if (!this.hasMark(item)) {
+            ItemMeta im = item.getItemMeta();
+            List<String> lore = im.getLore();
+            lore.remove(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
+            im.setLore(lore);
+            item.setItemMeta(im);
         }
 
+        return item;
+    }
+
+    public boolean hasMark(ItemStack item) {
+        if (item.getItemMeta().hasLore()) {
+            for (String s : item.getItemMeta().getLore()) {
+                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

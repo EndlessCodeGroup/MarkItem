@@ -1,5 +1,6 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import ru.endlesscode.markitem.misc.Config;
 public class MarkItem extends JavaPlugin {
     private static MarkItem instance;
     private static ItemMarker itemMarker;
+    public static final String UNIQUE_MARK_TAG = ChatColor.translateAlternateColorCodes('&', "&m&a&r&k&r");
 
     public static MarkItem getInstance() {
         return instance;
