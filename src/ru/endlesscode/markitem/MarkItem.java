@@ -42,11 +42,13 @@ public class MarkItem extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            ((Player) sender).getInventory().addItem(itemMarker.getMark());
-            return true;
+            Player player = (Player) sender;
+            if (player.getInventory().firstEmpty() != -1) {
+                player.getInventory().addItem(itemMarker.getMark());
+            }
         } else {
             sender.sendMessage("It's player side command");
-            return false;
         }
+        return true;
     }
 }
