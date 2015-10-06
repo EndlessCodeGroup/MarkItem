@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -47,6 +48,7 @@ public class ItemMarker implements Listener {
         im.setLore(lore);
         if (Config.getConfig().getBoolean("mark.glow", false)) {
             im.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
         
         item.setItemMeta(im);
