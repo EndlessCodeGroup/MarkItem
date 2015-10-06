@@ -1,7 +1,7 @@
 name: MarkItem
 version: 0.3
 description: Mark your items
-author: OsipXD
+authors: [OsipXD, Dereku]
 
 main: ru.endlesscode.markitem.MarkItem
 

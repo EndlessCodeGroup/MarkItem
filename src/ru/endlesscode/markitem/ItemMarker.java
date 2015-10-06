@@ -1,21 +1,20 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
+import ru.endlesscode.markitem.misc.Config;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
-import ru.endlesscode.markitem.misc.Config;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -46,15 +45,13 @@ public class ItemMarker implements Listener {
         List<String> lore = new ArrayList<>();
         Collections.addAll(lore, ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.lore")).split("\n"));
         im.setLore(lore);
-        if (Config.getConfig().getBoolean("mark.glow", false)) {
-            im.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        
         item.setItemMeta(im);
 
-        this.mark = item;
+        if (Config.getConfig().getBoolean("mark.glow", false)) {
+            Glow.addGlow(item);
+        }
 
+        this.mark = item;
         this.init();
     }
 
@@ -139,7 +136,7 @@ public class ItemMarker implements Listener {
     private ItemStack addMark(ItemStack item) {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
+            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
             lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
             im.setLore(lore);
             item.setItemMeta(im);
@@ -148,20 +145,24 @@ public class ItemMarker implements Listener {
         return item;
     }
 
-    public ItemStack removeMark(ItemStack item) {
-        if (!this.hasMark(item)) {
-            ItemMeta im = item.getItemMeta();
-            List<String> lore = im.getLore();
-            for (String s : lore) {
-                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
-                    lore.remove(s);
-                }
-            }
-            im.setLore(lore);
-            item.setItemMeta(im);
-        }
-        return item;
-    }
+// --Commented out by Inspection START (06.10.2015 15:05):
+//    public ItemStack removeMark(ItemStack item) {
+//        if (!this.hasMark(item)) {
+//            ItemMeta im = item.getItemMeta();
+//            List<String> lore = im.getLore();
+//
+//            for (String s : lore) {
+//                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
+//                    lore.remove(s);
+//                }
+//            }
+//
+//            im.setLore(lore);
+//            item.setItemMeta(im);
+//        }
+//        return item;
+//    }
+// --Commented out by Inspection STOP (06.10.2015 15:05)
 
     public boolean hasMark(ItemStack item) {
         if (item.getItemMeta().hasLore()) {
@@ -171,16 +172,14 @@ public class ItemMarker implements Listener {
                 }
             }
         }
+
         return this.hasOldMark(item);
     }
-    
+
     public boolean hasOldMark(ItemStack item) {
-        if (item.getItemMeta().hasLore()) {
-            return item.getItemMeta().getLore().contains(this.getMarkText());
-        }
-        return false;
+        return item.getItemMeta().hasLore() && item.getItemMeta().getLore().contains(this.getMarkText());
     }
-    
+
     public ItemStack updateMark(ItemStack item) {
         if (this.hasOldMark(item)) {
             List<String> lore = item.getItemMeta().getLore();
@@ -188,14 +187,15 @@ public class ItemMarker implements Listener {
             lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
             item.getItemMeta().setLore(lore);
         }
+
         return item;
     }
 
     public ItemStack getMark() {
         return this.mark;
     }
-    
-    public String getMarkText() {
+
+    private String getMarkText() {
         return ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text"));
     }
 

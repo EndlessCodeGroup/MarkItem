@@ -1,10 +1,5 @@
 package ru.endlesscode.markitem;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
 
 /**
  * Created by OsipXD on 11.09.2015
@@ -50,13 +47,12 @@ class PlayerListener implements Listener {
         INVENTORIES.put(player.getUniqueId(), contents.toArray(new ItemStack[contents.size()]));
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         player.getInventory().setArmorContents(ARMORS.get(player.getUniqueId()));
-        if (INVENTORIES.get(player.getUniqueId()) != null) {
-            player.getInventory().addItem(INVENTORIES.get(player.getUniqueId()));
-        }
+        player.getInventory().addItem(INVENTORIES.get(player.getUniqueId()));
+
         ARMORS.remove(player.getUniqueId());
         INVENTORIES.remove(player.getUniqueId());
     }
