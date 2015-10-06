@@ -1,17 +1,21 @@
 package ru.endlesscode.markitem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.misc.Config;
-
-import java.util.*;
 
 /**
  * Created by OsipXD on 10.09.2015
@@ -26,7 +30,7 @@ public class ItemMarker implements Listener {
         String[] textures = Config.getConfig().getString("mark.texture").split(":");
 
         if (Material.getMaterial(textures[0]) == null) {
-            MarkItem.getInstance().getLogger().warning("Material " + textures[0] + " not found");
+            MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} not found", textures[0]);
             this.mark = new ItemStack(Material.AIR);
             return;
         }
@@ -42,6 +46,11 @@ public class ItemMarker implements Listener {
         List<String> lore = new ArrayList<>();
         Collections.addAll(lore, ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.lore")).split("\n"));
         im.setLore(lore);
+        if (Config.getConfig().getBoolean("mark.glow", false)) {
+            im.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+        
         item.setItemMeta(im);
 
         this.mark = item;
@@ -84,11 +93,11 @@ public class ItemMarker implements Listener {
             }
         }
 
-        MarkItem.getInstance().getLogger().info(this.count + " item(s) have been initialized");
+        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} item(s) have been initialized", this.count);
     }
 
     @SuppressWarnings("deprecation")
-    private boolean isDenied(@NotNull ItemStack item) {
+    private boolean isDenied(ItemStack item) {
         List<String> deniedList = Config.getConfig().getStringList("denied");
         for (String denied : deniedList) {
             if (denied.contains("-")) {
@@ -119,7 +128,7 @@ public class ItemMarker implements Listener {
         return false;
     }
 
-    private void addRecipe(@NotNull ItemStack item) {
+    private void addRecipe(ItemStack item) {
         this.count++;
         ShapelessRecipe recipe = new ShapelessRecipe(item);
         recipe.addIngredient(item.getData());
@@ -127,12 +136,11 @@ public class ItemMarker implements Listener {
         MarkItem.getInstance().getServer().addRecipe(recipe);
     }
 
-    @NotNull
-    private ItemStack addMark(@NotNull ItemStack item) {
+    private ItemStack addMark(ItemStack item) {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
-            lore.add(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
+            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
+            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
             im.setLore(lore);
             item.setItemMeta(im);
         }
@@ -140,33 +148,55 @@ public class ItemMarker implements Listener {
         return item;
     }
 
-// --Commented out by Inspection START (12.09.2015 14:03):
-//    @NotNull
-//    public ItemStack removeMark(@NotNull ItemStack item) {
-//        if (!this.hasMark(item)) {
-//            ItemMeta im = item.getItemMeta();
-//            List<String> lore = im.getLore();
-//            lore.remove(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")));
-//            im.setLore(lore);
-//            item.setItemMeta(im);
-//        }
-//
-//        return item;
-//    }
-// --Commented out by Inspection STOP (12.09.2015 14:03)
+    public ItemStack removeMark(ItemStack item) {
+        if (!this.hasMark(item)) {
+            ItemMeta im = item.getItemMeta();
+            List<String> lore = im.getLore();
+            for (String s : lore) {
+                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
+                    lore.remove(s);
+                }
+            }
+            im.setLore(lore);
+            item.setItemMeta(im);
+        }
+        return item;
+    }
 
-    public boolean hasMark(@NotNull ItemStack item) {
-        if (item.hasItemMeta()) if (item.getItemMeta().hasLore()) {
-            if (item.getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text")))) {
-                return true;
+    public boolean hasMark(ItemStack item) {
+        if (item.getItemMeta().hasLore()) {
+            for (String s : item.getItemMeta().getLore()) {
+                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
+                    return true;
+                }
             }
         }
-
+        return this.hasOldMark(item);
+    }
+    
+    public boolean hasOldMark(ItemStack item) {
+        if (item.getItemMeta().hasLore()) {
+            return item.getItemMeta().getLore().contains(this.getMarkText());
+        }
         return false;
+    }
+    
+    public ItemStack updateMark(ItemStack item) {
+        if (this.hasOldMark(item)) {
+            List<String> lore = item.getItemMeta().getLore();
+            lore.remove(this.getMarkText());
+            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
+            item.getItemMeta().setLore(lore);
+        }
+        return item;
     }
 
     public ItemStack getMark() {
         return this.mark;
+    }
+    
+    public String getMarkText() {
+        return ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text"));
     }
 
     @EventHandler

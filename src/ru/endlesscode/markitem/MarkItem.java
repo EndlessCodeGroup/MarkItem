@@ -1,5 +1,6 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import ru.endlesscode.markitem.misc.Config;
 public class MarkItem extends JavaPlugin {
     private static MarkItem instance;
     private static ItemMarker itemMarker;
+    public static final String UNIQUE_MARK_TAG = ChatColor.translateAlternateColorCodes('&', "&m&a&r&k&r");
 
     public static MarkItem getInstance() {
         return instance;
@@ -42,11 +44,13 @@ public class MarkItem extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            ((Player) sender).getInventory().addItem(itemMarker.getMark());
-            return true;
+            Player player = (Player) sender;
+            if (player.getInventory().firstEmpty() != -1) {
+                player.getInventory().addItem(itemMarker.getMark());
+            }
         } else {
             sender.sendMessage("It's player side command");
-            return false;
         }
+        return true;
     }
 }

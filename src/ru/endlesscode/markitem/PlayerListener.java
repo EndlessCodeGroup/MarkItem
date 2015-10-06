@@ -1,5 +1,10 @@
 package ru.endlesscode.markitem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
 
 /**
  * Created by OsipXD on 11.09.2015
@@ -26,10 +29,10 @@ class PlayerListener implements Listener {
 
         List<ItemStack> armorList = new ArrayList<>();
         for (ItemStack armor : player.getInventory().getArmorContents()) {
-            if (armor == null || armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
+            if (armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
                 armorList.add(new ItemStack(Material.AIR, 0));
             } else {
-                armorList.add(armor);
+                armorList.add(MarkItem.getItemMarker().hasOldMark(armor) ? MarkItem.getItemMarker().updateMark(armor) : armor);
                 event.getDrops().remove(armor);
             }
         }
@@ -38,8 +41,8 @@ class PlayerListener implements Listener {
 
         List<ItemStack> contents = new ArrayList<>();
         for (ItemStack drop : new ArrayList<>(event.getDrops())) {
-            if (drop != null && drop.getType() != Material.AIR && MarkItem.getItemMarker().hasMark(drop)) {
-                contents.add(drop);
+            if (drop.getType() != Material.AIR && MarkItem.getItemMarker().hasMark(drop)) {
+                contents.add(MarkItem.getItemMarker().hasOldMark(drop) ? MarkItem.getItemMarker().updateMark(drop) : drop);
                 event.getDrops().remove(drop);
             }
         }
