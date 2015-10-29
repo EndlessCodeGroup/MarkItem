@@ -13,6 +13,7 @@ import ru.endlesscode.markitem.misc.Config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -213,14 +214,22 @@ public class ItemMarker implements Listener {
                 return;
             }
 
-            if (matrix.contains(this.mark)) {
-                matrix.remove(this.mark);
-                ItemStack result = matrix.get(0).clone();
+            for (Iterator<ItemStack> it = matrix.iterator(); it.hasNext();) {
+                ItemStack is = it.next();
+                if (!is.getItemMeta().hasLore()) {
+                    continue;
+                }
 
-                if (this.isDenied(result) || this.hasMark(result)) {
-                    event.getInventory().setResult(null);
-                } else {
-                    event.getInventory().setResult(this.addMark(result));
+                if (is.getItemMeta().getLore().containsAll(this.getMark().getItemMeta().getLore())) {
+                    it.remove();
+
+                    ItemStack result = matrix.get(0).clone();
+
+                    if (this.isDenied(result) || this.hasMark(result)) {
+                        event.getInventory().setResult(null);
+                    } else {
+                        event.getInventory().setResult(this.addMark(result));
+                    }
                 }
             }
         }
