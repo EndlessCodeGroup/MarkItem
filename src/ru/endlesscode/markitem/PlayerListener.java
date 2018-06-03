@@ -26,7 +26,7 @@ class PlayerListener implements Listener {
 
         List<ItemStack> armorList = new ArrayList<>();
         for (ItemStack armor : player.getInventory().getArmorContents()) {
-            if (armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
+            if (armor == null || armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
                 armorList.add(new ItemStack(Material.AIR, 0));
             } else {
                 armorList.add(MarkItem.getItemMarker().hasOldMark(armor) ? MarkItem.getItemMarker().updateMark(armor) : armor);
