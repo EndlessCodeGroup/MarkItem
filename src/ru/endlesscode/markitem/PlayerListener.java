@@ -29,7 +29,7 @@ class PlayerListener implements Listener {
             if (armor == null || armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
                 armorList.add(new ItemStack(Material.AIR, 0));
             } else {
-                armorList.add(MarkItem.getItemMarker().hasOldMark(armor) ? MarkItem.getItemMarker().updateMark(armor) : armor);
+                armorList.add(MarkItem.getItemMarker().updateMark(armor));
                 event.getDrops().remove(armor);
             }
         }
@@ -39,7 +39,7 @@ class PlayerListener implements Listener {
         List<ItemStack> contents = new ArrayList<>();
         for (ItemStack drop : new ArrayList<>(event.getDrops())) {
             if (drop.getType() != Material.AIR && MarkItem.getItemMarker().hasMark(drop)) {
-                contents.add(MarkItem.getItemMarker().hasOldMark(drop) ? MarkItem.getItemMarker().updateMark(drop) : drop);
+                contents.add(MarkItem.getItemMarker().updateMark(drop));
                 event.getDrops().remove(drop);
             }
         }
