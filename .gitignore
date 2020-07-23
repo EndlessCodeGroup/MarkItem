@@ -4,3 +4,4 @@ build.xml
 /dist/
 /.idea/
 MarkItem.iml
+/target/

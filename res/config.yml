@@ -1,6 +1,6 @@
 enabled: true
 mark:
-  texture: INK_SACK:1
+  texture: RED_DYE
   glow: false
   name: "&9Mark"
   lore: "&e&oYou can mark your items and they do not drop when death"
@@ -9,16 +9,13 @@ mark:
 ##
 # Allowed and denied items
 # ------------------------------------------
-# You can use a range of values, eg 1-100
-# Also you can use item metadata (durability), eg 351#14
+# You can use a regex for matching materials, eg diamond_.*
 ##
 allowed:
-  - 256-258
-  - 267-279
-  - 283-286
-  - 290-294
-  - 298-317
-  - 346
+  - iron_.+
+  - diamond_chestplate
+  - (cross)?bow
+  - .+_leggings
 denied:
-  - 268-271
-  - 290
+  - iron_h.*
+  - chainmal_leggings

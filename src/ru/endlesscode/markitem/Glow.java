@@ -26,7 +26,7 @@ class Glow extends EnchantmentWrapper {
     }
 
     private Glow() {
-        super(69);
+        super("glow_effect");
     }
 
     @Override
@@ -41,7 +41,7 @@ class Glow extends EnchantmentWrapper {
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        return null;
+        return EnchantmentTarget.ALL;
     }
 
     @Override
@@ -61,5 +61,16 @@ class Glow extends EnchantmentWrapper {
 
     public static void addGlow(ItemStack item) {
         item.addEnchantment(GLOW, 1);
+    }
+
+    public static void register() {
+        try {
+            Field acceptingNew = Enchantment.class.getDeclaredField("acceptingNew");
+            acceptingNew.setAccessible(true);
+            acceptingNew.set(null, true);
+            Enchantment.registerEnchantment(GLOW);
+        } catch (Exception ignored) {
+
+        }
     }
 }
