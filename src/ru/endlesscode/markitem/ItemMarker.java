@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import ru.endlesscode.markitem.misc.Config;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
  */
 public class ItemMarker implements Listener {
     private final ItemStack mark;
+    private static final NamespacedKey UNIQUE_MARK_TAG = new NamespacedKey(MarkItem.getInstance(), "markitem_marked");
 
     public ItemMarker() {
         String[] textures = Config.getConfig().getString("mark.texture").split(":");
@@ -123,8 +125,9 @@ public class ItemMarker implements Listener {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
+            lore.add(this.getMarkText());
             im.setLore(lore);
+            im.getPersistentDataContainer().set(UNIQUE_MARK_TAG, PersistentDataType.BYTE, (byte) 1);
             item.setItemMeta(im);
         }
 
@@ -151,27 +154,22 @@ public class ItemMarker implements Listener {
 // --Commented out by Inspection STOP (06.10.2015 15:05)
 
     public boolean hasMark(ItemStack item) {
-        if (item.getItemMeta().hasLore()) {
-            for (String s : item.getItemMeta().getLore()) {
-                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
-                    return true;
-                }
-            }
-        }
-
-        return this.hasOldMark(item);
+        ItemMeta meta = item.getItemMeta();
+        return meta.getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE) || this.hasOldMark(meta);
     }
 
-    public boolean hasOldMark(ItemStack item) {
-        return item.getItemMeta().hasLore() && item.getItemMeta().getLore().contains(this.getMarkText());
+    public boolean hasOldMark(ItemMeta meta) {
+        return meta.hasLore() && meta.getLore().contains(this.getMarkText());
     }
 
     public ItemStack updateMark(ItemStack item) {
-        if (this.hasOldMark(item)) {
-            List<String> lore = item.getItemMeta().getLore();
+        ItemMeta meta = item.getItemMeta();
+        if (this.hasOldMark(meta)) {
+            List<String> lore = meta.getLore();
             lore.remove(this.getMarkText());
-            lore.add(MarkItem.UNIQUE_MARK_TAG + this.getMarkText());
-            item.getItemMeta().setLore(lore);
+            meta.setLore(lore);
+            meta.getPersistentDataContainer().set(UNIQUE_MARK_TAG, PersistentDataType.BYTE, (byte) 1);
+            item.setItemMeta(meta);
         }
 
         return item;

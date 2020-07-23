@@ -1,6 +1,7 @@
 package ru.endlesscode.markitem;
 
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,7 +13,6 @@ import ru.endlesscode.markitem.misc.Config;
  * All rights reserved 2014 - 2015 © «EndlessCode Group»
  */
 public class MarkItem extends JavaPlugin {
-    public static final String UNIQUE_MARK_TAG = ChatColor.translateAlternateColorCodes('&', "&m&a&r&k&r");
 
     private static MarkItem instance;
     private static ItemMarker itemMarker;
