@@ -2,7 +2,7 @@ name: MarkItem
 version: ${project.version}
 description: Mark your items
 authors: [OsipXD, Dereku]
-api-version: '1.13'
+api-version: '1.14'
 
 main: ru.endlesscode.markitem.MarkItem
 
