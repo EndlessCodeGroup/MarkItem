@@ -19,7 +19,6 @@ class CommandExecutor {
 
 
     public static void giveMark(CommandSender sender, String name) {
-        @SuppressWarnings("deprecation")
         Player player = MarkItem.getInstance().getServer().getPlayer(name);
 
         if (player == null) {

@@ -155,24 +155,7 @@ public class ItemMarker implements Listener {
 
     public boolean hasMark(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        return meta.getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE) || this.hasOldMark(meta);
-    }
-
-    public boolean hasOldMark(ItemMeta meta) {
-        return meta.hasLore() && meta.getLore().contains(this.getMarkText());
-    }
-
-    public ItemStack updateMark(ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        if (this.hasOldMark(meta)) {
-            List<String> lore = meta.getLore();
-            lore.remove(this.getMarkText());
-            meta.setLore(lore);
-            meta.getPersistentDataContainer().set(UNIQUE_MARK_TAG, PersistentDataType.BYTE, (byte) 1);
-            item.setItemMeta(meta);
-        }
-
-        return item;
+        return meta.getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE);
     }
 
     public ItemStack getMark() {
