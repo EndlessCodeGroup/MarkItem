@@ -1,5 +1,6 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,15 +32,19 @@ import java.util.regex.Pattern;
  */
 public class ItemMarker implements Listener {
     private final ItemStack mark;
+    private final ItemMeta markMeta;
+    private final boolean update;
     private static final NamespacedKey UNIQUE_MARK_TAG = new NamespacedKey(MarkItem.getInstance(), "markitem_marked");
 
     public ItemMarker() {
+        update = Config.getConfig().getBoolean("update", false);
         String[] textures = Config.getConfig().getString("mark.texture").split(":");
         Material textureType = Material.getMaterial(textures[0]);
 
         if (textureType == null) {
             MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} not found", textures[0]);
             this.mark = new ItemStack(Material.AIR);
+            this.markMeta = mark.getItemMeta();
             return;
         }
 
@@ -69,6 +74,7 @@ public class ItemMarker implements Listener {
         }
 
         this.mark = item;
+        this.markMeta = item.getItemMeta();
         this.init();
     }
 
@@ -118,7 +124,7 @@ public class ItemMarker implements Listener {
         ), item);
         recipe.addIngredient(item.getData());
         recipe.addIngredient(this.mark.getData());
-        MarkItem.getInstance().getServer().addRecipe(recipe);
+        Bukkit.addRecipe(recipe);
     }
 
     private ItemStack addMark(ItemStack item) {
@@ -134,28 +140,23 @@ public class ItemMarker implements Listener {
         return item;
     }
 
-// --Commented out by Inspection START (06.10.2015 15:05):
-//    public ItemStack removeMark(ItemStack item) {
-//        if (!this.hasMark(item)) {
-//            ItemMeta im = item.getItemMeta();
-//            List<String> lore = im.getLore();
-//
-//            for (String s : lore) {
-//                if (s.startsWith(MarkItem.UNIQUE_MARK_TAG)) {
-//                    lore.remove(s);
-//                }
-//            }
-//
-//            im.setLore(lore);
-//            item.setItemMeta(im);
-//        }
-//        return item;
-//    }
-// --Commented out by Inspection STOP (06.10.2015 15:05)
-
     public boolean hasMark(ItemStack item) {
+        return item.hasItemMeta() &&
+                item.getItemMeta().getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE) ||
+                (update && updateMark(item));
+    }
+
+    private boolean updateMark(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        return meta.getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE);
+        if (meta.hasLore()) {
+            for (String s : meta.getLore()) {
+                if (s.startsWith("§m§a§r§k§r")) {
+                    addMark(item);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public ItemStack getMark() {
@@ -182,11 +183,12 @@ public class ItemMarker implements Listener {
 
             for (Iterator<ItemStack> it = matrix.iterator(); it.hasNext();) {
                 ItemStack is = it.next();
-                if (!is.getItemMeta().hasLore()) {
+                if (!is.hasItemMeta()) {
                     continue;
                 }
+                ItemMeta meta = is.getItemMeta();
 
-                if (is.getItemMeta().getLore().containsAll(this.getMark().getItemMeta().getLore())) {
+                if (meta.hasLore() && meta.getLore().containsAll(markMeta.getLore())) {
                     it.remove();
 
                     ItemStack result = matrix.get(0).clone();
