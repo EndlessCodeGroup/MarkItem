@@ -107,13 +107,11 @@ public class ItemMarker implements Listener {
             }
         }
 
-        int count = 0;
         for(Material type : allowed) {
-            count++;
             addRecipe(type);
         }
 
-        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} item(s) have been initialized", count);
+        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} item(s) have been initialized", allowed.size());
     }
 
     private void addRecipe(Material type) {
