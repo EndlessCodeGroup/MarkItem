@@ -15,16 +15,6 @@ import java.lang.reflect.Field;
 class Glow extends EnchantmentWrapper {
     private static final Enchantment GLOW = new Glow();
 
-    static {
-        try {
-            Field field = Enchantment.class.getDeclaredField("acceptingNew");
-            field.setAccessible(true);
-            field.set(null, true);
-
-            Enchantment.registerEnchantment(GLOW);
-        } catch (Exception ignored) {}
-    }
-
     private Glow() {
         super("glow_effect");
     }
@@ -70,7 +60,6 @@ class Glow extends EnchantmentWrapper {
             acceptingNew.set(null, true);
             Enchantment.registerEnchantment(GLOW);
         } catch (Exception ignored) {
-
         }
     }
 }
