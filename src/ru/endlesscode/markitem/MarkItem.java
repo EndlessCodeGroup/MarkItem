@@ -3,6 +3,7 @@ package ru.endlesscode.markitem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.misc.Config;
 
 public class MarkItem extends JavaPlugin {
@@ -37,7 +38,12 @@ public class MarkItem extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(
+            @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String label,
+            String[] args
+    ) {
         if (args.length == 0) {
             CommandExecutor.giveMark(sender);
         } else {
