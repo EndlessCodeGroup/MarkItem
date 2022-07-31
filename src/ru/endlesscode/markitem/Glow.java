@@ -7,11 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by OsipXD on 06.10.2015
- * It is part of the MarkItem.
- * All rights reserved 2014 - 2015 © «EndlessCode Group»
- */
 class Glow extends EnchantmentWrapper {
     private static final Enchantment GLOW = new Glow();
 

@@ -3,11 +3,6 @@ package ru.endlesscode.markitem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/**
- * Created by OsipXD on 06.10.2015
- * It is part of the MarkItem.
- * All rights reserved 2014 - 2015 © «EndlessCode Group»
- */
 class CommandExecutor {
     public static void giveMark(CommandSender sender) {
         if (sender instanceof Player) {

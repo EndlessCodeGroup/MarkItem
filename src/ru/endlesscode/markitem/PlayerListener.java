@@ -11,11 +11,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-/**
- * Created by OsipXD on 11.09.2015
- * It is part of the MarkItem.
- * All rights reserved 2014 - 2015 © «EndlessCode Group»
- */
 class PlayerListener implements Listener {
     private static final Map<UUID, ItemStack[]> INVENTORIES = new HashMap<>();
     private static final Map<UUID, ItemStack[]> ARMORS = new HashMap<>();

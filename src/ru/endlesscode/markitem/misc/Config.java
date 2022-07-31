@@ -6,11 +6,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
-/**
- * Created by OsipXD on 22.08.2015.
- * It is part of the MarkItem.
- * Copyright © 2015 «EndlessCode Group»
- */
 public class Config {
     private static FileConfiguration config;
 

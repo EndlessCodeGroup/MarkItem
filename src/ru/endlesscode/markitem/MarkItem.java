@@ -5,11 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.endlesscode.markitem.misc.Config;
 
-/**
- * Created by OsipXD on 10.09.2015
- * It is part of the MarkItem.
- * All rights reserved 2014 - 2015 © «EndlessCode Group»
- */
 public class MarkItem extends JavaPlugin {
 
     private static MarkItem instance;

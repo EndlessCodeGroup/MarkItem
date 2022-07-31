@@ -25,11 +25,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-/**
- * Created by OsipXD on 10.09.2015
- * It is part of the MarkItem.
- * All rights reserved 2014 - 2015 © «EndlessCode Group»
- */
 public class ItemMarker implements Listener {
     private final ItemStack mark;
     private final ItemMeta markMeta;
