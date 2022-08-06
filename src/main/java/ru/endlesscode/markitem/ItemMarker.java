@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,13 +16,18 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static ru.endlesscode.markitem.ItemUtils.KEY_MARK;
+import static ru.endlesscode.markitem.ItemUtils.KEY_MARKED;
 
 public class ItemMarker implements Listener {
     private final ItemStack mark;
     private final ItemMeta markMeta;
     private final String markText;
     private final boolean update;
-    private static final NamespacedKey UNIQUE_MARK_TAG = new NamespacedKey(MarkItem.getInstance(), "markitem_marked");
+
+    private static final String RECIPE_PREFIX = "marked_";
 
     public ItemMarker(Config config) {
         update = config.isUpdate();
@@ -115,7 +121,7 @@ public class ItemMarker implements Listener {
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
             lore.add(this.markText);
             im.setLore(lore);
-            im.getPersistentDataContainer().set(UNIQUE_MARK_TAG, PersistentDataType.BYTE, (byte) 1);
+            im.getPersistentDataContainer().set(KEY_MARKED, PersistentDataType.BYTE, (byte) 1);
             item.setItemMeta(im);
         }
 
@@ -124,7 +130,7 @@ public class ItemMarker implements Listener {
 
     public boolean hasMark(ItemStack item) {
         return item.hasItemMeta() &&
-                item.getItemMeta().getPersistentDataContainer().has(UNIQUE_MARK_TAG, PersistentDataType.BYTE) ||
+                item.getItemMeta().getPersistentDataContainer().has(KEY_MARKED, PersistentDataType.BYTE) ||
                 (update && updateMark(item));
     }
 
@@ -145,39 +151,47 @@ public class ItemMarker implements Listener {
         return this.mark;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCraft(PrepareItemCraftEvent event) {
-        List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix()));
-        if (event.getRecipe() instanceof ShapelessRecipe) {
-            for (ItemStack item : event.getInventory().getMatrix()) {
-                if (item == null || item.getType() == Material.AIR) {
-                    matrix.remove(item);
-                }
+        if (!isMarkedItemRecipe(event.getRecipe())) {
+            return;
+        }
+
+        List<ItemStack> matrix = Arrays.stream(event.getInventory().getMatrix())
+                .filter(ItemUtils::isNotEmpty)
+                .collect(Collectors.toList());
+
+        if (matrix.size() != 2) {
+            return;
+        }
+
+        for (Iterator<ItemStack> it = matrix.iterator(); it.hasNext(); ) {
+            ItemStack is = it.next();
+            if (!is.hasItemMeta()) {
+                continue;
             }
+            ItemMeta meta = is.getItemMeta();
 
-            if (matrix.size() != 2) {
-                return;
-            }
+            if (meta.hasLore() && meta.getLore().containsAll(markMeta.getLore())) {
+                it.remove();
 
-            for (Iterator<ItemStack> it = matrix.iterator(); it.hasNext();) {
-                ItemStack is = it.next();
-                if (!is.hasItemMeta()) {
-                    continue;
-                }
-                ItemMeta meta = is.getItemMeta();
+                ItemStack result = matrix.get(0).clone();
 
-                if (meta.hasLore() && meta.getLore().containsAll(markMeta.getLore())) {
-                    it.remove();
-
-                    ItemStack result = matrix.get(0).clone();
-
-                    if (this.hasMark(result)) {
-                        event.getInventory().setResult(null);
-                    } else {
-                        event.getInventory().setResult(this.addMark(result));
-                    }
+                if (this.hasMark(result)) {
+                    event.getInventory().setResult(null);
+                } else {
+                    event.getInventory().setResult(this.addMark(result));
                 }
             }
         }
+    }
+
+    private boolean isMarkedItemRecipe(Recipe recipe) {
+        if (!(recipe instanceof ShapelessRecipe)) return false;
+
+        NamespacedKey key = ((ShapelessRecipe) recipe).getKey();
+        String markItemNamespace = KEY_MARK.getNamespace();
+        return key.getNamespace().equals(markItemNamespace) &&
+                key.getKey().startsWith(RECIPE_PREFIX);
     }
 }
