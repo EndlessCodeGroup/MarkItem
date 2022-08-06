@@ -4,7 +4,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import ru.endlesscode.markitem.misc.Config;
 
 public class MarkItem extends JavaPlugin {
 
@@ -22,17 +21,19 @@ public class MarkItem extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        Config.loadConfig(this);
 
-        if (!Config.getConfig().getBoolean("enabled")) {
-            this.getLogger().warning("Plugin is not enabled!");
+        saveDefaultConfig();
+        Config config = new Config(this.getConfig());
+
+        if (!config.isEnabled()) {
+            this.getLogger().warning("Plugin is not enabled.");
             this.setEnabled(false);
             return;
         }
 
         Glow.register();
 
-        itemMarker = new ItemMarker();
+        itemMarker = new ItemMarker(config);
         this.getServer().getPluginManager().registerEvents(itemMarker, this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }

@@ -1,7 +1,6 @@
 package ru.endlesscode.markitem;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -12,28 +11,22 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import ru.endlesscode.markitem.misc.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class ItemMarker implements Listener {
     private final ItemStack mark;
     private final ItemMeta markMeta;
+    private final String markText;
     private final boolean update;
     private static final NamespacedKey UNIQUE_MARK_TAG = new NamespacedKey(MarkItem.getInstance(), "markitem_marked");
 
-    public ItemMarker() {
-        update = Config.getConfig().getBoolean("update", false);
-        String[] textures = Config.getConfig().getString("mark.texture").split(":");
+    public ItemMarker(Config config) {
+        update = config.isUpdate();
+        markText = config.getMarkText();
+        String[] textures = config.getMarkTexture().split(":");
         Material textureType = Material.getMaterial(textures[0]);
 
         if (textureType == null) {
@@ -48,7 +41,7 @@ public class ItemMarker implements Listener {
         if (textures.length == 2) try {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof Damageable) {
-                ((Damageable)meta).setDamage(Integer.parseInt(textures[1], 0));
+                ((Damageable) meta).setDamage(Integer.parseInt(textures[1], 0));
                 item.setItemMeta(meta);
             } else {
                 MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} is not damageable", textures[0]);
@@ -58,27 +51,23 @@ public class ItemMarker implements Listener {
         }
 
         ItemMeta im = item.getItemMeta();
-        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.name")));
-        List<String> lore = new ArrayList<>();
-        Collections.addAll(lore, ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.lore")).split("\n"));
-        im.setLore(lore);
+        im.setDisplayName(config.getMarkName());
+        im.setLore(config.getMarkLore());
         item.setItemMeta(im);
 
-        if (Config.getConfig().getBoolean("mark.glow", false)) {
+        if (config.isMarkGlow()) {
             Glow.addGlow(item);
         }
 
         this.mark = item;
         this.markMeta = item.getItemMeta();
-        this.init();
+        this.init(config);
     }
 
     @SuppressWarnings("deprecation")
-    private void init() {
-        List<Pattern> denyPatterns = new ArrayList<>();
-        Config.getConfig().getStringList("denied").forEach(s -> denyPatterns.add(Pattern.compile(s, Pattern.CASE_INSENSITIVE)));
-        List<Pattern> allowPatterns = new ArrayList<>();
-        Config.getConfig().getStringList("allowed").forEach(s -> allowPatterns.add(Pattern.compile(s, Pattern.CASE_INSENSITIVE)));
+    private void init(Config config) {
+        List<Pattern> denyPatterns = config.getDenied();
+        List<Pattern> allowPatterns = config.getAllowed();
 
         Set<Material> allowed = EnumSet.noneOf(Material.class);
         for(Material type : Material.values()) {
@@ -124,7 +113,7 @@ public class ItemMarker implements Listener {
         if (!this.hasMark(item)) {
             ItemMeta im = item.getItemMeta();
             List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            lore.add(this.getMarkText());
+            lore.add(this.markText);
             im.setLore(lore);
             im.getPersistentDataContainer().set(UNIQUE_MARK_TAG, PersistentDataType.BYTE, (byte) 1);
             item.setItemMeta(im);
@@ -154,10 +143,6 @@ public class ItemMarker implements Listener {
 
     public ItemStack getMark() {
         return this.mark;
-    }
-
-    private String getMarkText() {
-        return ChatColor.translateAlternateColorCodes('&', Config.getConfig().getString("mark.text"));
     }
 
     @EventHandler
