@@ -1,7 +1,13 @@
+# NetBeans
 /nbproject/
-build.xml
-/build/
 /dist/
+build.xml
+
+# IDEA
 /.idea/
 MarkItem.iml
+
+# Maven & Gradle
 /target/
+/.gradle/
+/build/
