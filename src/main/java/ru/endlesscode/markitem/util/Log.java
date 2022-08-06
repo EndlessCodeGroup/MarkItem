@@ -1,4 +1,4 @@
-package ru.endlesscode.markitem;
+package ru.endlesscode.markitem.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class Log {
+public class Log {
 
     @Nullable
     static private Logger logger;
@@ -15,15 +15,15 @@ class Log {
         // should not be instantiated
     }
 
-    static void init(@NotNull Logger logger) {
+    public static void init(@NotNull Logger logger) {
         Log.logger = logger;
     }
 
-    static void i(String message, Object... params) {
+    public static void i(String message, Object... params) {
         log(Level.INFO, message, params);
     }
 
-    static void w(String message, Object... params) {
+    public static void w(String message, Object... params) {
         log(Level.WARNING, message, params);
     }
 

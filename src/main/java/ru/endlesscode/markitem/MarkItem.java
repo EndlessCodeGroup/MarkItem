@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import ru.endlesscode.markitem.util.Log;
 
 public class MarkItem extends JavaPlugin {
 
@@ -16,7 +17,7 @@ public class MarkItem extends JavaPlugin {
     }
 
     @NotNull
-    static NamespacedKey namespacedKey(@NotNull String key) {
+    public static NamespacedKey namespacedKey(@NotNull String key) {
         return new NamespacedKey(instance, key);
     }
 

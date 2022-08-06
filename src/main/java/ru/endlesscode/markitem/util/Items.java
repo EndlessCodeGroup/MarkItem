@@ -1,5 +1,6 @@
-package ru.endlesscode.markitem;
+package ru.endlesscode.markitem.util;
 
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,21 +12,18 @@ import java.util.function.Consumer;
 
 import static org.bukkit.persistence.PersistentDataType.BYTE;
 
-class ItemUtils {
+public class Items {
 
-    static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
-    static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
-
-    private ItemUtils() {
+    private Items() {
         // Should not be instantiated
     }
 
     @Contract("null -> false")
-    static boolean isNotEmpty(@Nullable ItemStack itemStack) {
-        return itemStack != null && !itemStack.getType().isAir();
+    public static boolean isNotEmpty(@Nullable ItemStack itemStack) {
+        return itemStack != null && itemStack.getType() != Material.AIR;
     }
 
-    static void addFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
+    public static void addFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
             itemMeta.getPersistentDataContainer().set(flag, BYTE, (byte) 1);
@@ -33,7 +31,7 @@ class ItemUtils {
         }
     }
 
-    static boolean hasFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
+    public static boolean hasFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
             return itemMeta.getPersistentDataContainer().has(flag, BYTE);
@@ -41,13 +39,11 @@ class ItemUtils {
         return false;
     }
 
-    @NotNull
-    static ItemStack editItemMeta(@NotNull ItemStack itemStack, Consumer<ItemMeta> edit) {
+    public static void editItemMeta(@NotNull ItemStack itemStack, Consumer<ItemMeta> edit) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
             edit.accept(itemMeta);
             itemStack.setItemMeta(itemMeta);
         }
-        return itemStack;
     }
 }

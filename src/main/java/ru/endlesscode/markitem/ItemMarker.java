@@ -11,6 +11,8 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import ru.endlesscode.markitem.util.Items;
+import ru.endlesscode.markitem.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,14 +21,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ru.endlesscode.markitem.ItemUtils.KEY_MARK;
-import static ru.endlesscode.markitem.ItemUtils.KEY_MARKED;
-
 public class ItemMarker implements Listener {
     private final ItemStack mark;
     private final ItemMeta markMeta;
     private final String markText;
 
+    private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
+    private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
     private static final String RECIPE_PREFIX = "marked_";
 
     public ItemMarker(Config config) {
@@ -103,19 +104,19 @@ public class ItemMarker implements Listener {
 
     private ItemStack addMarkToItem(ItemStack item) {
         if (!itemIsMarked(item)) {
-            ItemUtils.editItemMeta(item, im -> {
+            Items.editItemMeta(item, im -> {
                 List<String> lore = im.getLore() != null ? im.getLore() : new ArrayList<>();
                 lore.add(this.markText);
                 im.setLore(lore);
             });
-            ItemUtils.addFlag(item, KEY_MARKED);
+            Items.addFlag(item, KEY_MARKED);
         }
 
         return item;
     }
 
     public static boolean itemIsMarked(ItemStack item) {
-        return ItemUtils.hasFlag(item, KEY_MARKED);
+        return Items.hasFlag(item, KEY_MARKED);
     }
 
     public ItemStack getMark() {
@@ -129,7 +130,7 @@ public class ItemMarker implements Listener {
         }
 
         List<ItemStack> matrix = Arrays.stream(event.getInventory().getMatrix())
-                .filter(ItemUtils::isNotEmpty)
+                .filter(Items::isNotEmpty)
                 .collect(Collectors.toList());
 
         if (matrix.size() != 2) {
