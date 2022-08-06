@@ -14,7 +14,7 @@ class CommandExecutor {
 
 
     public static void giveMark(CommandSender sender, String name) {
-        Player player = MarkItem.getInstance().getServer().getPlayer(name);
+        Player player = sender.getServer().getPlayer(name);
 
         if (player == null) {
             sender.sendMessage("Player " + name + " not found.");

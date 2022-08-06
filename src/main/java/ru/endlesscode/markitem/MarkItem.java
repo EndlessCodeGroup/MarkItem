@@ -1,5 +1,6 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,12 +11,13 @@ public class MarkItem extends JavaPlugin {
     private static MarkItem instance;
     private static ItemMarker itemMarker;
 
-    public static MarkItem getInstance() {
-        return instance;
-    }
-
     public static ItemMarker getItemMarker() {
         return itemMarker;
+    }
+
+    @NotNull
+    static NamespacedKey namespacedKey(@NotNull String key) {
+        return new NamespacedKey(instance, key);
     }
 
     @Override

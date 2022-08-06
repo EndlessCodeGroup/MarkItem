@@ -13,8 +13,8 @@ import static org.bukkit.persistence.PersistentDataType.BYTE;
 
 class ItemUtils {
 
-    static final NamespacedKey KEY_MARK = new NamespacedKey(MarkItem.getInstance(), "mark");
-    static final NamespacedKey KEY_MARKED = new NamespacedKey(MarkItem.getInstance(), "markitem_marked");
+    static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
+    static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
 
     private ItemUtils() {
         // Should not be instantiated

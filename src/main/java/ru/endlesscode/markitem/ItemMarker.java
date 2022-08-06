@@ -92,7 +92,7 @@ public class ItemMarker implements Listener {
 
     private boolean addRecipe(Material type) {
         ShapelessRecipe recipe = new ShapelessRecipe(
-                new NamespacedKey(MarkItem.getInstance(), RECIPE_PREFIX + type.name()),
+                MarkItem.namespacedKey(RECIPE_PREFIX + type.name()),
                 new ItemStack(type)
         )
                 .addIngredient(type)
