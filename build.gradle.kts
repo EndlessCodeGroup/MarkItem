@@ -1,26 +1,35 @@
+import ru.endlesscode.bukkitgradle.dependencies.spigot
+import ru.endlesscode.bukkitgradle.dependencies.spigotApi
+
 plugins {
-    java
+    id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
 
 group = "ru.endlesscode.markitem"
-version = "0.5"
 description = "Mark your items"
+version = "0.5"
 
 repositories {
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    spigot()
+}
+
+bukkit {
+    apiVersion = "1.19.1"
+
+    server {
+        setCore("paper")
+        eula = true
+    }
+
+    meta {
+        name.set("MarkItem")
+        authors.addAll("osipxd", "Dereku")
+        apiVersion.set("1.14")
+    }
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.19.1-R0.1-SNAPSHOT")
+    compileOnly(spigotApi)
     compileOnly("org.jetbrains:annotations:23.0.0")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
 }
