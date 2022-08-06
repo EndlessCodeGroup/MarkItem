@@ -18,7 +18,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-      - uses: actions/upload-artifact@3
+      - uses: actions/upload-artifact@v3
         with:
           name: MarkItem
           path: build/libs/markitem-*.jar
