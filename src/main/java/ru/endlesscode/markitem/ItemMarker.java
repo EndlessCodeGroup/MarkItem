@@ -25,12 +25,10 @@ public class ItemMarker implements Listener {
     private final ItemStack mark;
     private final ItemMeta markMeta;
     private final String markText;
-    private final boolean update;
 
     private static final String RECIPE_PREFIX = "marked_";
 
     public ItemMarker(Config config) {
-        update = config.isUpdate();
         markText = config.getMarkText();
         String[] textures = config.getMarkTexture().split(":");
         Material textureType = Material.getMaterial(textures[0]);
@@ -130,21 +128,7 @@ public class ItemMarker implements Listener {
 
     public boolean hasMark(ItemStack item) {
         return item.hasItemMeta() &&
-                item.getItemMeta().getPersistentDataContainer().has(KEY_MARKED, PersistentDataType.BYTE) ||
-                (update && updateMark(item));
-    }
-
-    private boolean updateMark(ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta.hasLore()) {
-            for (String s : meta.getLore()) {
-                if (s.startsWith("§m§a§r§k§r")) {
-                    addMark(item);
-                    return true;
-                }
-            }
-        }
-        return false;
+                item.getItemMeta().getPersistentDataContainer().has(KEY_MARKED, PersistentDataType.BYTE);
     }
 
     public ItemStack getMark() {

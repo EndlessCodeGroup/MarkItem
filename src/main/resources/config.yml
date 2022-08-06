@@ -6,9 +6,6 @@ mark:
   lore: "&e&oYou can mark your items and they do not drop when death"
   text: "&9- Item is marked"
 
-# Update marked items from old version of the plugin (up to 0.4, doesn't work for servers on 1.16)
-update: false
-
 ##
 # Allowed and denied items
 # ------------------------------------------

@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 class Config {
 
     private boolean enabled = true;
-    private boolean update = false;
 
     private String markTexture = "";
     private String markName = "";
@@ -32,7 +31,6 @@ class Config {
 
     private void load() {
         enabled = configuration.getBoolean("enabled", true);
-        update = configuration.getBoolean("update", false);
 
         markTexture = configuration.getString("mark.texture", "");
         markName = getColorizedString("mark.name");
@@ -59,10 +57,6 @@ class Config {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public boolean isUpdate() {
-        return update;
     }
 
     public String getMarkTexture() {
