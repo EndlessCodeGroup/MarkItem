@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public class ItemMarker implements Listener {
         Material textureType = Material.getMaterial(textures[0]);
 
         if (textureType == null) {
-            MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} not found", textures[0]);
+            Log.w("Material {0} not found", textures[0]);
             this.mark = new ItemStack(Material.AIR);
             this.markMeta = mark.getItemMeta();
             return;
@@ -50,10 +49,10 @@ public class ItemMarker implements Listener {
                 ((Damageable) meta).setDamage(Integer.parseInt(textures[1], 0));
                 item.setItemMeta(meta);
             } else {
-                MarkItem.getInstance().getLogger().log(Level.WARNING, "Material {0} is not damageable", textures[0]);
+                Log.w("Material {0} is not damageable", textures[0]);
             }
         } catch (NumberFormatException e) {
-            MarkItem.getInstance().getLogger().log(Level.WARNING, "{0} is not a number", textures[1]);
+            Log.w("{0} is not a number", textures[1]);
         }
 
         ItemMeta im = item.getItemMeta();
@@ -80,7 +79,7 @@ public class ItemMarker implements Listener {
                 .filter(Boolean::booleanValue)
                 .count();
 
-        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} recipe(s) has been added", count);
+        Log.i("{0} recipe(s) has been added", count);
     }
 
     private boolean noneMatch(List<Pattern> patterns, Material material) {

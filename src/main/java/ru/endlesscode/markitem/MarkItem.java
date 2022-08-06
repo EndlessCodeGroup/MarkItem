@@ -21,6 +21,7 @@ public class MarkItem extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        Log.init(getLogger());
 
         saveDefaultConfig();
         Config config = new Config(this.getConfig());
