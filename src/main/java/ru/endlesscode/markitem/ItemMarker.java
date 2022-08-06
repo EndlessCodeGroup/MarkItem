@@ -11,26 +11,24 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Items;
 import ru.endlesscode.markitem.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ItemMarker implements Listener {
     private final ItemStack mark;
-    private final ItemMeta markMeta;
     private final String markText;
 
     private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
     private static final String RECIPE_PREFIX = "marked_";
 
-    public ItemMarker(Config config) {
+    public ItemMarker(@NotNull Config config) {
         markText = config.getMarkText();
         String[] textures = config.getMarkTexture().split(":");
         Material textureType = Material.getMaterial(textures[0]);
@@ -38,22 +36,23 @@ public class ItemMarker implements Listener {
         if (textureType == null) {
             Log.w("Material {0} not found", textures[0]);
             this.mark = new ItemStack(Material.AIR);
-            this.markMeta = mark.getItemMeta();
             return;
         }
 
         ItemStack item = new ItemStack(textureType);
 
-        if (textures.length == 2) try {
-            ItemMeta meta = item.getItemMeta();
-            if (meta instanceof Damageable) {
-                ((Damageable) meta).setDamage(Integer.parseInt(textures[1], 0));
-                item.setItemMeta(meta);
-            } else {
-                Log.w("Material {0} is not damageable", textures[0]);
+        if (textures.length == 2) {
+            try {
+                ItemMeta meta = item.getItemMeta();
+                if (meta instanceof Damageable) {
+                    ((Damageable) meta).setDamage(Integer.parseInt(textures[1], 0));
+                    item.setItemMeta(meta);
+                } else {
+                    Log.w("Material {0} is not damageable", textures[0]);
+                }
+            } catch (NumberFormatException e) {
+                Log.w("{0} is not a number", textures[1]);
             }
-        } catch (NumberFormatException e) {
-            Log.w("{0} is not a number", textures[1]);
         }
 
         ItemMeta im = item.getItemMeta();
@@ -65,8 +64,8 @@ public class ItemMarker implements Listener {
             Glow.addGlow(item);
         }
 
+        Items.addFlag(item, KEY_MARK);
         this.mark = item;
-        this.markMeta = item.getItemMeta();
         addRecipes(config.getAllowed(), config.getDenied());
     }
 
@@ -97,7 +96,7 @@ public class ItemMarker implements Listener {
                 new ItemStack(type)
         )
                 .addIngredient(type)
-                .addIngredient(mark.getData());
+                .addIngredient(mark.getType());
 
         return Bukkit.addRecipe(recipe);
     }
@@ -115,7 +114,7 @@ public class ItemMarker implements Listener {
         return item;
     }
 
-    public static boolean itemIsMarked(ItemStack item) {
+    public static boolean itemIsMarked(@NotNull ItemStack item) {
         return Items.hasFlag(item, KEY_MARKED);
     }
 
@@ -125,36 +124,31 @@ public class ItemMarker implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCraft(PrepareItemCraftEvent event) {
-        if (!isMarkedItemRecipe(event.getRecipe())) {
-            return;
-        }
+        if (!isMarkedItemRecipe(event.getRecipe())) return;
 
-        List<ItemStack> matrix = Arrays.stream(event.getInventory().getMatrix())
+        // Filter out unwanted empty items
+        ItemStack[] matrix = Arrays.stream(event.getInventory().getMatrix())
                 .filter(Items::isNotEmpty)
-                .collect(Collectors.toList());
+                .toArray(ItemStack[]::new);
 
-        if (matrix.size() != 2) {
-            return;
+        // Let's see which of two items should be marked
+        if (matrix.length != 2) return;
+        boolean firstIsMark = isMark(matrix[0]);
+        boolean secondIsMark = isMark(matrix[1]);
+
+        ItemStack itemToMark = null;
+        if (!secondIsMark && firstIsMark) {
+            itemToMark = matrix[1];
+        } else if (!firstIsMark && secondIsMark) {
+            itemToMark = matrix[0];
         }
 
-        for (Iterator<ItemStack> it = matrix.iterator(); it.hasNext(); ) {
-            ItemStack is = it.next();
-            if (!is.hasItemMeta()) {
-                continue;
-            }
-            ItemMeta meta = is.getItemMeta();
-
-            if (meta.hasLore() && meta.getLore().containsAll(markMeta.getLore())) {
-                it.remove();
-
-                ItemStack result = matrix.get(0).clone();
-
-                if (itemIsMarked(result)) {
-                    event.getInventory().setResult(null);
-                } else {
-                    event.getInventory().setResult(addMarkToItem(result));
-                }
-            }
+        // We don't want to mark the same item twice
+        if (itemToMark == null || itemIsMarked(itemToMark)) {
+            event.getInventory().setResult(null);
+        } else {
+            ItemStack result = itemToMark.clone();
+            event.getInventory().setResult(addMarkToItem(result));
         }
     }
 
@@ -165,5 +159,9 @@ public class ItemMarker implements Listener {
         String markItemNamespace = KEY_MARK.getNamespace();
         return key.getNamespace().equals(markItemNamespace) &&
                 key.getKey().startsWith(RECIPE_PREFIX);
+    }
+
+    private boolean isMark(@NotNull ItemStack itemStack) {
+        return Items.hasFlag(itemStack, KEY_MARK);
     }
 }
