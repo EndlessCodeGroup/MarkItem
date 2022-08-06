@@ -113,22 +113,21 @@ public class ItemMarker implements Listener {
         Bukkit.addRecipe(recipe);
     }
 
-    private ItemStack addMark(ItemStack item) {
-        if (!this.hasMark(item)) {
-            ItemMeta im = item.getItemMeta();
-            List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<>();
-            lore.add(this.markText);
-            im.setLore(lore);
-            im.getPersistentDataContainer().set(KEY_MARKED, PersistentDataType.BYTE, (byte) 1);
-            item.setItemMeta(im);
+    private ItemStack addMarkToItem(ItemStack item) {
+        if (!itemIsMarked(item)) {
+            ItemUtils.editItemMeta(item, im -> {
+                List<String> lore = im.getLore() != null ? im.getLore() : new ArrayList<>();
+                lore.add(this.markText);
+                im.setLore(lore);
+            });
+            ItemUtils.addFlag(item, KEY_MARKED);
         }
 
         return item;
     }
 
-    public boolean hasMark(ItemStack item) {
-        return item.hasItemMeta() &&
-                item.getItemMeta().getPersistentDataContainer().has(KEY_MARKED, PersistentDataType.BYTE);
+    public static boolean itemIsMarked(ItemStack item) {
+        return ItemUtils.hasFlag(item, KEY_MARKED);
     }
 
     public ItemStack getMark() {
@@ -161,10 +160,10 @@ public class ItemMarker implements Listener {
 
                 ItemStack result = matrix.get(0).clone();
 
-                if (this.hasMark(result)) {
+                if (itemIsMarked(result)) {
                     event.getInventory().setResult(null);
                 } else {
-                    event.getInventory().setResult(this.addMark(result));
+                    event.getInventory().setResult(addMarkToItem(result));
                 }
             }
         }

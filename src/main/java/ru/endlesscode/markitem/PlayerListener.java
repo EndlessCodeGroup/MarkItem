@@ -21,7 +21,7 @@ class PlayerListener implements Listener {
 
         List<ItemStack> armorList = new ArrayList<>();
         for (ItemStack armor : player.getInventory().getArmorContents()) {
-            if (armor == null || armor.getType() == Material.AIR || !MarkItem.getItemMarker().hasMark(armor)) {
+            if (armor == null || armor.getType() == Material.AIR || !ItemMarker.itemIsMarked(armor)) {
                 armorList.add(new ItemStack(Material.AIR, 0));
             } else {
                 armorList.add(armor);
@@ -33,7 +33,7 @@ class PlayerListener implements Listener {
 
         List<ItemStack> contents = new ArrayList<>();
         for (ItemStack drop : new ArrayList<>(event.getDrops())) {
-            if (drop.getType() != Material.AIR && MarkItem.getItemMarker().hasMark(drop)) {
+            if (drop.getType() != Material.AIR && ItemMarker.itemIsMarked(drop)) {
                 contents.add(drop);
                 event.getDrops().remove(drop);
             }
