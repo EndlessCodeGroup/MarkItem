@@ -11,9 +11,11 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -65,52 +67,39 @@ public class ItemMarker implements Listener {
 
         this.mark = item;
         this.markMeta = item.getItemMeta();
-        this.init(config);
+        addRecipes(config.getAllowed(), config.getDenied());
     }
 
-    @SuppressWarnings("deprecation")
-    private void init(Config config) {
-        List<Pattern> denyPatterns = config.getDenied();
-        List<Pattern> allowPatterns = config.getAllowed();
+    private void addRecipes(List<Pattern> allowPatterns, List<Pattern> denyPatterns) {
+        long count = Arrays.stream(Material.values())
+                .filter(Material::isItem)
+                .filter(material -> anyMatch(allowPatterns, material))
+                .filter(material -> noneMatch(denyPatterns, material))
+                .map(this::addRecipe)
+                // Count only successfully added recipes
+                .filter(Boolean::booleanValue)
+                .count();
 
-        Set<Material> allowed = EnumSet.noneOf(Material.class);
-        for(Material type : Material.values()) {
-            if(type.isLegacy() || !type.isItem()) continue;
-            String typeStr = type.name();
-
-            boolean denied = false;
-            for(Pattern pattern : denyPatterns) {
-                if(pattern.matcher(typeStr).matches()) {
-                    denied = true;
-                    break;
-                }
-            }
-            if(denied) continue;
-
-            for(Pattern pattern : allowPatterns) {
-                if(pattern.matcher(typeStr).matches()) {
-                    allowed.add(type);
-                    break;
-                }
-            }
-        }
-
-        for(Material type : allowed) {
-            addRecipe(type);
-        }
-
-        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} item(s) have been initialized", allowed.size());
+        MarkItem.getInstance().getLogger().log(Level.INFO, "{0} recipe(s) has been added", count);
     }
 
-    private void addRecipe(Material type) {
-        ItemStack item = new ItemStack(type);
-        ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(
-                MarkItem.getInstance(),
-                "marked_" + type.name().toLowerCase(Locale.ENGLISH)
-        ), item);
-        recipe.addIngredient(item.getData());
-        recipe.addIngredient(this.mark.getData());
-        Bukkit.addRecipe(recipe);
+    private boolean noneMatch(List<Pattern> patterns, Material material) {
+        return !anyMatch(patterns, material);
+    }
+
+    private boolean anyMatch(List<Pattern> patterns, Material material) {
+        return patterns.stream().anyMatch(pattern -> pattern.matcher(material.name()).matches());
+    }
+
+    private boolean addRecipe(Material type) {
+        ShapelessRecipe recipe = new ShapelessRecipe(
+                new NamespacedKey(MarkItem.getInstance(), RECIPE_PREFIX + type.name()),
+                new ItemStack(type)
+        )
+                .addIngredient(type)
+                .addIngredient(mark.getData());
+
+        return Bukkit.addRecipe(recipe);
     }
 
     private ItemStack addMarkToItem(ItemStack item) {
