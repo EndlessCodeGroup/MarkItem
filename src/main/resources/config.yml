@@ -1,7 +1,6 @@
 enabled: true
 mark:
   texture: RED_DYE
-  glow: false
   name: "&9Mark"
   lore:
     - "&e&oYou can mark your items to keep it on death"

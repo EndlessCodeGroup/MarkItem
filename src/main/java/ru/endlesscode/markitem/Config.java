@@ -18,7 +18,6 @@ class Config {
     private String markName = "";
     private List<String> markText = Collections.emptyList();
     private List<String> markLore = Collections.emptyList();
-    private boolean markGlow = false;
 
     private String recipeTitle = "";
     private List<String> recipeDescription = Collections.emptyList();
@@ -40,7 +39,6 @@ class Config {
         markName = getColorizedString("mark.name");
         markText = getColorizedStringList("mark.text");
         markLore = getColorizedStringList("mark.lore");
-        markGlow = configuration.getBoolean("mark.glow", false);
 
         recipeTitle = getColorizedString("recipe.title");
         recipeDescription = getColorizedStringList("recipe.description");
@@ -87,10 +85,6 @@ class Config {
 
     public List<String> getMarkLore() {
         return markLore;
-    }
-
-    public boolean isMarkGlow() {
-        return markGlow;
     }
 
     public String getRecipeTitle() {

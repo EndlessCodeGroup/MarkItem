@@ -35,8 +35,6 @@ public class MarkItem extends JavaPlugin {
             return;
         }
 
-        Glow.register();
-
         itemMarker = new ItemMarker(config);
         this.getServer().getPluginManager().registerEvents(itemMarker, this);
         this.getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);

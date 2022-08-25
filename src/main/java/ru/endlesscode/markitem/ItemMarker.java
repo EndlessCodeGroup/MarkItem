@@ -61,10 +61,6 @@ public class ItemMarker implements Listener {
             im.setLore(config.getMarkLore());
         });
 
-        if (config.isMarkGlow()) {
-            Glow.addGlow(item);
-        }
-
         Items.addFlag(item, KEY_MARK);
         this.mark = item;
 
