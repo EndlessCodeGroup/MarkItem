@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class ItemMarker implements Listener {
     private final ItemStack mark;
-    private final String markText;
+    private final List<String> markText;
 
     private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
@@ -106,7 +106,7 @@ public class ItemMarker implements Listener {
         if (!itemIsMarked(item)) {
             Items.editItemMeta(item, im -> {
                 List<String> lore = im.getLore() != null ? im.getLore() : new ArrayList<>();
-                lore.add(this.markText);
+                lore.addAll(this.markText);
                 im.setLore(lore);
             });
             Items.addFlag(item, KEY_MARKED);

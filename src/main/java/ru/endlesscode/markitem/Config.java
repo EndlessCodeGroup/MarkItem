@@ -16,7 +16,7 @@ class Config {
 
     private String markTexture = "";
     private String markName = "";
-    private String markText = "";
+    private List<String> markText = Collections.emptyList();
     private List<String> markLore = Collections.emptyList();
     private boolean markGlow = false;
 
@@ -38,7 +38,7 @@ class Config {
 
         markTexture = configuration.getString("mark.texture", "");
         markName = getColorizedString("mark.name");
-        markText = getColorizedString("mark.text");
+        markText = getColorizedStringList("mark.text");
         markLore = getColorizedStringList("mark.lore");
         markGlow = configuration.getBoolean("mark.glow", false);
 
@@ -81,7 +81,7 @@ class Config {
         return markName;
     }
 
-    public String getMarkText() {
+    public List<String> getMarkText() {
         return markText;
     }
 

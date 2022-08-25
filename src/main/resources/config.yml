@@ -5,7 +5,8 @@ mark:
   name: "&9Mark"
   lore:
     - "&e&oYou can mark your items to keep it on death"
-  text: "&9- Item is marked"
+  text:
+    - "&9- Item is marked"
 
 # Recipe will be shown to player in recipe book
 recipe:
