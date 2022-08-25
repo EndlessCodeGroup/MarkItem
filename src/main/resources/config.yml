@@ -14,15 +14,27 @@ recipe:
     - "You can mark your items to keep it on death"
 
 ##
-# Allowed and denied items
-# ------------------------------------------
-# You can use a regex for matching materials, eg diamond_.*
+# Allowed and denied items for marking.
+#
+# You can use simple patterns for items matching.
+# The simple pattern is a subset of the shell pattern matching or [glob][https://en.wikipedia.org/wiki/Glob_(programming)]
+# - '*' matches any zero or more characters
+# - '?' matches any one character
 ##
 allowed:
-  - iron_.+
-  - diamond_chestplate
-  - (cross)?bow
-  - .+_leggings
+  - '*_head'
+  - '*_skull'
+  - '*_helmet'
+  - '*_chestplate'
+  - '*_leggings'
+  - '*_boots'
+  - '*_sword'
+  - '*_axe'
+  - 'elytra'
+  - 'bow'
+  - 'crossbow'
+  - 'trident'
+  - 'shield'
 denied:
-  - iron_h.*
-  - chainmal_leggings
+  - 'wooden_*'
+  - 'leather_*'

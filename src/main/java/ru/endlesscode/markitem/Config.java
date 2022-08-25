@@ -3,8 +3,8 @@ package ru.endlesscode.markitem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
+import ru.endlesscode.markitem.util.Strings;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -43,8 +43,8 @@ class Config {
         recipeTitle = getColorizedString("recipe.title");
         recipeDescription = getColorizedStringList("recipe.description");
 
-        allowed = getRegexList("allowed");
-        denied = getRegexList("denied");
+        allowed = getSimplePatternList("allowed");
+        denied = getSimplePatternList("denied");
     }
 
     private String getColorizedString(String path) {
@@ -58,13 +58,11 @@ class Config {
                 .collect(Collectors.toList());
     }
 
-    private @NotNull List<Pattern> getRegexList(String path) {
-        List<String> lines = configuration.getStringList(path);
-        List<Pattern> list = new ArrayList<>(lines.size());
-        for (String line : lines) {
-            list.add(Pattern.compile(line, Pattern.CASE_INSENSITIVE));
-        }
-        return list;
+    private @NotNull List<Pattern> getSimplePatternList(String path) {
+        return configuration.getStringList(path)
+                .stream()
+                .map(Strings::parseSimplePattern)
+                .collect(Collectors.toList());
     }
 
     public boolean isEnabled() {
