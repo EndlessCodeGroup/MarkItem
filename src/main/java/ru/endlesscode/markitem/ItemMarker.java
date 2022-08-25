@@ -70,11 +70,8 @@ public class ItemMarker implements Listener {
 
         ItemStack recipeItem = new ItemStack(mark.getType());
         Items.editItemMeta(recipeItem, im -> {
-            // FIXME: Add fields to config
-            im.setDisplayName("Marked Item");
-            List<String> lore = new ArrayList<>();
-            lore.add("Try to mark items");
-            im.setLore(lore);
+            im.setDisplayName(config.getRecipeTitle());
+            im.setLore(config.getRecipeDescription());
         });
         addRecipe(recipeItem, config.getAllowed(), config.getDenied());
     }

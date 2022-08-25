@@ -5,10 +5,10 @@ import org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 class Config {
 
@@ -19,6 +19,10 @@ class Config {
     private String markText = "";
     private List<String> markLore = Collections.emptyList();
     private boolean markGlow = false;
+
+    private String recipeTitle = "";
+    private List<String> recipeDescription = Collections.emptyList();
+
     private List<Pattern> allowed = Collections.emptyList();
     private List<Pattern> denied = Collections.emptyList();
 
@@ -35,8 +39,11 @@ class Config {
         markTexture = configuration.getString("mark.texture", "");
         markName = getColorizedString("mark.name");
         markText = getColorizedString("mark.text");
-        markLore = Arrays.asList(getColorizedString("mark.lore").split("\n"));
+        markLore = getColorizedStringList("mark.lore");
         markGlow = configuration.getBoolean("mark.glow", false);
+
+        recipeTitle = getColorizedString("recipe.title");
+        recipeDescription = getColorizedStringList("recipe.description");
 
         allowed = getRegexList("allowed");
         denied = getRegexList("denied");
@@ -44,6 +51,13 @@ class Config {
 
     private String getColorizedString(String path) {
         return ChatColor.translateAlternateColorCodes('&', configuration.getString(path, ""));
+    }
+
+    private List<String> getColorizedStringList(String path) {
+        return configuration.getStringList(path)
+                .stream()
+                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                .collect(Collectors.toList());
     }
 
     private @NotNull List<Pattern> getRegexList(String path) {
@@ -77,6 +91,14 @@ class Config {
 
     public boolean isMarkGlow() {
         return markGlow;
+    }
+
+    public String getRecipeTitle() {
+        return recipeTitle;
+    }
+
+    public List<String> getRecipeDescription() {
+        return recipeDescription;
     }
 
     public List<Pattern> getAllowed() {

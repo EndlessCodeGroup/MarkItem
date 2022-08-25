@@ -3,8 +3,15 @@ mark:
   texture: RED_DYE
   glow: false
   name: "&9Mark"
-  lore: "&e&oYou can mark your items and they do not drop when death"
+  lore:
+    - "&e&oYou can mark your items to keep it on death"
   text: "&9- Item is marked"
+
+# Recipe will be shown to player in recipe book
+recipe:
+  title: "Marked Item"
+  description:
+    - "You can mark your items to keep it on death"
 
 ##
 # Allowed and denied items
