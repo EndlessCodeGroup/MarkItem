@@ -13,7 +13,7 @@ import ru.endlesscode.markitem.util.Items;
 
 import java.util.*;
 
-class PlayerListener implements Listener {
+class PlayerInventoryKeeper implements Listener {
     private static final Map<UUID, ItemStack[]> INVENTORIES = new HashMap<>();
     private static final Map<UUID, ItemStack[]> ARMORS = new HashMap<>();
 

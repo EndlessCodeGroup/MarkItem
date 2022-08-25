@@ -39,7 +39,7 @@ public class MarkItem extends JavaPlugin {
 
         itemMarker = new ItemMarker(config);
         this.getServer().getPluginManager().registerEvents(itemMarker, this);
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
     }
 
     @Override
