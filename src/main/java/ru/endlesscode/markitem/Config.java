@@ -1,6 +1,5 @@
 package ru.endlesscode.markitem;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Strings;
@@ -48,13 +47,13 @@ class Config {
     }
 
     private String getColorizedString(String path) {
-        return ChatColor.translateAlternateColorCodes('&', configuration.getString(path, ""));
+        return Strings.colorize(configuration.getString(path, ""));
     }
 
     private List<String> getColorizedStringList(String path) {
         return configuration.getStringList(path)
                 .stream()
-                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                .map(Strings::colorize)
                 .collect(Collectors.toList());
     }
 
