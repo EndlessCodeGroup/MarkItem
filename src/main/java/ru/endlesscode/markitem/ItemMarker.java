@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +27,7 @@ public class ItemMarker implements Listener {
 
     private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
-    private static final String RECIPE_PREFIX = "marked_";
+    private static final NamespacedKey KEY_RECIPE = MarkItem.namespacedKey("recipe");
 
     public ItemMarker(@NotNull Config config) {
         markText = config.getMarkText();
@@ -55,10 +56,10 @@ public class ItemMarker implements Listener {
             }
         }
 
-        ItemMeta im = item.getItemMeta();
-        im.setDisplayName(config.getMarkName());
-        im.setLore(config.getMarkLore());
-        item.setItemMeta(im);
+        Items.editItemMeta(item, im -> {
+            im.setDisplayName(config.getMarkName());
+            im.setLore(config.getMarkLore());
+        });
 
         if (config.isMarkGlow()) {
             Glow.addGlow(item);
@@ -66,20 +67,34 @@ public class ItemMarker implements Listener {
 
         Items.addFlag(item, KEY_MARK);
         this.mark = item;
-        addRecipes(config.getAllowed(), config.getDenied());
+
+        ItemStack recipeItem = new ItemStack(mark.getType());
+        Items.editItemMeta(recipeItem, im -> {
+            // FIXME: Add fields to config
+            im.setDisplayName("Marked Item");
+            List<String> lore = new ArrayList<>();
+            lore.add("Try to mark items");
+            im.setLore(lore);
+        });
+        addRecipe(recipeItem, config.getAllowed(), config.getDenied());
     }
 
-    private void addRecipes(List<Pattern> allowPatterns, List<Pattern> denyPatterns) {
-        long count = Arrays.stream(Material.values())
+    private void addRecipe(ItemStack result, List<Pattern> allowPatterns, List<Pattern> denyPatterns) {
+        Material[] materials = Arrays.stream(Material.values())
                 .filter(Material::isItem)
                 .filter(material -> anyMatch(allowPatterns, material))
                 .filter(material -> noneMatch(denyPatterns, material))
-                .map(this::addRecipe)
-                // Count only successfully added recipes
-                .filter(Boolean::booleanValue)
-                .count();
+                .toArray(Material[]::new);
 
-        Log.i("{0} recipe(s) has been added", count);
+        ShapelessRecipe recipe = new ShapelessRecipe(KEY_RECIPE, result)
+                .addIngredient(mark.getType())
+                .addIngredient(new RecipeChoice.MaterialChoice(materials));
+
+        if (Bukkit.addRecipe(recipe)) {
+            Log.i("Added marked item recipe for {0} material(s)", materials.length);
+        } else {
+            Log.w("Marked item recipe wasn't added for some reason");
+        }
     }
 
     private boolean noneMatch(List<Pattern> patterns, Material material) {
@@ -88,17 +103,6 @@ public class ItemMarker implements Listener {
 
     private boolean anyMatch(List<Pattern> patterns, Material material) {
         return patterns.stream().anyMatch(pattern -> pattern.matcher(material.name()).matches());
-    }
-
-    private boolean addRecipe(Material type) {
-        ShapelessRecipe recipe = new ShapelessRecipe(
-                MarkItem.namespacedKey(RECIPE_PREFIX + type.name()),
-                new ItemStack(type)
-        )
-                .addIngredient(type)
-                .addIngredient(mark.getType());
-
-        return Bukkit.addRecipe(recipe);
     }
 
     private ItemStack addMarkToItem(ItemStack item) {
@@ -154,11 +158,7 @@ public class ItemMarker implements Listener {
 
     private boolean isMarkedItemRecipe(Recipe recipe) {
         if (!(recipe instanceof ShapelessRecipe)) return false;
-
-        NamespacedKey key = ((ShapelessRecipe) recipe).getKey();
-        String markItemNamespace = KEY_MARK.getNamespace();
-        return key.getNamespace().equals(markItemNamespace) &&
-                key.getKey().startsWith(RECIPE_PREFIX);
+        return KEY_RECIPE.equals(((ShapelessRecipe) recipe).getKey());
     }
 
     private boolean isMark(@NotNull ItemStack itemStack) {
