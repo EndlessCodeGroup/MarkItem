@@ -3,6 +3,7 @@ package ru.endlesscode.markitem;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Log;
@@ -63,7 +64,7 @@ public class MarkItem extends JavaPlugin {
         }
 
         if (!MimicApiLevel.checkApiLevel(MimicApiLevel.VERSION_0_7)) {
-            getLogger().severe("Required at least Mimic 0.7!");
+            getLogger().severe("Required at least Mimic 0.7");
             return false;
         }
 
@@ -72,7 +73,7 @@ public class MarkItem extends JavaPlugin {
 
     private void hookMimic(ItemsProvider itemsProvider) {
         MarkItemRegistry registry = new MarkItemRegistry(itemsProvider);
-        Mimic.getInstance().registerItemsRegistry(registry, MimicApiLevel.CURRENT, this);
+        Mimic.getInstance().registerItemsRegistry(registry, MimicApiLevel.CURRENT, this, ServicePriority.High);
     }
 
     @Override

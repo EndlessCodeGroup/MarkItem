@@ -67,7 +67,7 @@ class ItemsProvider {
     }
 
     private @NotNull ItemStack requireItem(@NotNull String id, @NotNull String option) {
-        if (id.startsWith("markitem") || id.equals(MarkItemRegistry.MARK_ID)) {
+        if (id.startsWith("markitem:") || id.equals(MarkItemRegistry.MARK_ID)) {
             throw new IllegalArgumentException("You can not use item '" + id + "' in option '" + option + "'");
         }
 
