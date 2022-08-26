@@ -13,6 +13,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Items;
 import ru.endlesscode.markitem.util.Log;
+import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 
 import java.util.Arrays;
 
@@ -24,8 +25,9 @@ public class CraftingItemMarker implements Listener {
 
     private static final NamespacedKey KEY_RECIPE = MarkItemPlugin.namespacedKey("recipe");
 
-    public CraftingItemMarker(@NotNull ItemMarker marker) {
-        this.marker = marker;
+    public CraftingItemMarker(Config config, BukkitItemsRegistry itemsRegistry) {
+        ItemsPatternMatcher matcher = new ItemsPatternMatcher(itemsRegistry, config.getAllowed(), config.getDenied());
+        this.marker = new ItemMarker(matcher, config.getMarkText());
     }
 
     void registerRecipe(@NotNull ItemsProvider itemsProvider) {

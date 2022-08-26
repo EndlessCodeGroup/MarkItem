@@ -44,8 +44,7 @@ public class MarkItemPlugin extends JavaPlugin {
 
         BukkitItemsRegistry itemsRegistry = Mimic.getInstance().getItemsRegistry();
 
-        ItemMarker marker = new ItemMarker(config, itemsRegistry);
-        final CraftingItemMarker craftingMarker = new CraftingItemMarker(marker);
+        final CraftingItemMarker craftingMarker = new CraftingItemMarker(config, itemsRegistry);
         getServer().getPluginManager().registerEvents(craftingMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
 
