@@ -21,14 +21,14 @@ import java.util.regex.Pattern;
 
 import static ru.endlesscode.markitem.ItemsProvider.isMark;
 
-public class ItemMarker implements Listener {
+public class CraftingItemMarker implements Listener {
     private final List<String> markText;
     private final Material[] allowedMaterials;
 
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
     private static final NamespacedKey KEY_RECIPE = MarkItem.namespacedKey("recipe");
 
-    public ItemMarker(@NotNull Config config) {
+    public CraftingItemMarker(@NotNull Config config) {
         markText = config.getMarkText();
         allowedMaterials = Arrays.stream(Material.values())
                 .filter(Material::isItem)

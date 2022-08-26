@@ -40,7 +40,7 @@ public class MarkItem extends JavaPlugin {
             return;
         }
 
-        final ItemMarker itemMarker = new ItemMarker(config);
+        final CraftingItemMarker itemMarker = new CraftingItemMarker(config);
         getServer().getPluginManager().registerEvents(itemMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
 

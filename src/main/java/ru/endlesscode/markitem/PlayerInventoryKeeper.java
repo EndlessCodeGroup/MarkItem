@@ -54,7 +54,7 @@ class PlayerInventoryKeeper implements Listener {
 
     private boolean shouldKeepItem(@Nullable ItemStack itemStack) {
         return Items.isNotEmpty(itemStack) &&
-                ItemMarker.itemIsMarked(itemStack);
+                CraftingItemMarker.itemIsMarked(itemStack);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
