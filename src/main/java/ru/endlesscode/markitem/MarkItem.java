@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Log;
+import ru.endlesscode.mimic.Mimic;
 import ru.endlesscode.mimic.MimicApiLevel;
 
 public class MarkItem extends JavaPlugin {
@@ -45,6 +46,8 @@ public class MarkItem extends JavaPlugin {
         itemMarker = new ItemMarker(config);
         getServer().getPluginManager().registerEvents(itemMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
+
+        hookMimic();
     }
 
     private boolean checkMimicEnabled() {
@@ -59,6 +62,11 @@ public class MarkItem extends JavaPlugin {
         }
 
         return true;
+    }
+
+    private void hookMimic() {
+        MarkItemRegistry registry = new MarkItemRegistry(itemMarker.getMark());
+        Mimic.getInstance().registerItemsRegistry(registry, MimicApiLevel.CURRENT, this);
     }
 
     @Override

@@ -154,7 +154,7 @@ public class ItemMarker implements Listener {
         return KEY_RECIPE.equals(((ShapelessRecipe) recipe).getKey());
     }
 
-    private boolean isMark(@NotNull ItemStack itemStack) {
+    static boolean isMark(@NotNull ItemStack itemStack) {
         return Items.hasFlag(itemStack, KEY_MARK);
     }
 }
