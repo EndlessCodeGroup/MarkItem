@@ -1,41 +1,30 @@
 package ru.endlesscode.markitem;
 
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.endlesscode.markitem.util.Items;
+import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 class ItemMarker {
 
+    private final BukkitItemsRegistry itemsRegistry;
     private final List<String> markText;
-    private final Set<Material> allowedMaterials;
+    private final List<Pattern> allowedPatterns;
+    private final List<Pattern> deniedPatterns;
 
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
 
-    ItemMarker(Config config) {
-        markText = config.getMarkText();
-        allowedMaterials = Arrays.stream(Material.values())
-                .filter(Material::isItem)
-                .filter(material -> anyMatch(config.getAllowed(), material))
-                .filter(material -> noneMatch(config.getDenied(), material))
-                .collect(Collectors.toSet());
-    }
-
-    private boolean noneMatch(List<Pattern> patterns, Material material) {
-        return !anyMatch(patterns, material);
-    }
-
-    private boolean anyMatch(List<Pattern> patterns, Material material) {
-        return patterns.stream().anyMatch(pattern -> pattern.matcher(material.name()).matches());
+    ItemMarker(Config config, BukkitItemsRegistry itemsRegistry) {
+        this.itemsRegistry = itemsRegistry;
+        this.markText = config.getMarkText();
+        this.allowedPatterns = config.getAllowed();
+        this.deniedPatterns = config.getDenied();
     }
 
     /**
@@ -62,6 +51,17 @@ class ItemMarker {
     }
 
     private boolean canBeMarked(@NotNull ItemStack itemStack) {
-        return allowedMaterials.contains(itemStack.getType());
+        String itemId = itemsRegistry.getItemId(itemStack);
+        assert itemId != null;
+
+        return anyMatch(allowedPatterns, itemId) && noneMatch(deniedPatterns, itemId);
+    }
+
+    private boolean noneMatch(List<Pattern> patterns, @NotNull String value) {
+        return !anyMatch(patterns, value);
+    }
+
+    private boolean anyMatch(List<Pattern> patterns, @NotNull String value) {
+        return patterns.stream().anyMatch(pattern -> pattern.matcher(value).matches());
     }
 }

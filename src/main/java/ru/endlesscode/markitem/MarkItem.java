@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Log;
 import ru.endlesscode.mimic.Mimic;
 import ru.endlesscode.mimic.MimicApiLevel;
+import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 
 public class MarkItem extends JavaPlugin {
 
@@ -40,17 +41,19 @@ public class MarkItem extends JavaPlugin {
             return;
         }
 
-        ItemMarker marker = new ItemMarker(config);
+        BukkitItemsRegistry itemsRegistry = Mimic.getInstance().getItemsRegistry();
+
+        ItemMarker marker = new ItemMarker(config, itemsRegistry);
         final CraftingItemMarker craftingMarker = new CraftingItemMarker(marker);
         getServer().getPluginManager().registerEvents(craftingMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
 
-        final ItemsProvider itemsProvider = new ItemsProvider(config, Mimic.getInstance().getItemsRegistry());
+        final ItemsProvider itemsProvider = new ItemsProvider(config, itemsRegistry);
         hookMimic(itemsProvider);
         commandExecutor = new CommandExecutor(itemsProvider);
 
         // Register recipe when all Mimic registries will be available
-        getServer().getScheduler().runTaskLater(this, () -> craftingMarker.registerRecipe(itemsProvider), 1L);
+        getServer().getScheduler().runTask(this, () -> craftingMarker.registerRecipe(itemsProvider));
     }
 
     private boolean checkMimicEnabled() {

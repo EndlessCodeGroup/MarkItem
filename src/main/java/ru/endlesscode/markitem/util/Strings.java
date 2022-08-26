@@ -12,13 +12,16 @@ public class Strings {
     }
 
     /**
-     * Converts a simple pattern String to a Regex.
+     * Converts an item ID pattern to Regex.
      */
-    static public @NotNull Pattern parseSimplePattern(@NotNull String pattern) {
-        String regex = pattern
-                .replace(".", "\\.")
-                .replace("*", ".*")
-                .replace("?", ".");
+    static public @NotNull Pattern parseItemIdPattern(@NotNull String pattern) {
+        String regex = Pattern.quote(pattern.trim())
+                .replace("*", "\\E.*\\Q")
+                .replace("?", "\\E.\\Q")
+                .replace("\\Q\\E", "");
+
+        if (!regex.contains(":")) regex = "(.+:)?" + regex;
+
         return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     }
 

@@ -44,8 +44,8 @@ class Config {
         recipeTitle = getColorizedString("recipe.title");
         recipeDescription = getColorizedStringList("recipe.description");
 
-        allowed = getSimplePatternList("allowed");
-        denied = getSimplePatternList("denied");
+        allowed = getItemIdPatternList("allowed");
+        denied = getItemIdPatternList("denied");
     }
 
     private String getColorizedString(String path) {
@@ -63,10 +63,10 @@ class Config {
                 .collect(Collectors.toList());
     }
 
-    private @NotNull List<Pattern> getSimplePatternList(String path) {
+    private @NotNull List<Pattern> getItemIdPatternList(String path) {
         return configuration.getStringList(path)
                 .stream()
-                .map(Strings::parseSimplePattern)
+                .map(Strings::parseItemIdPattern)
                 .collect(Collectors.toList());
     }
 

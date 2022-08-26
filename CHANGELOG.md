@@ -4,8 +4,8 @@
 
 This version brings integration with Mimic and **makes it required** for MarkItem.
 Integration with Mimic allows:
-- Get mark item via Mimic API or command. You can use marks everywhere where Mimic is supported (with id `markitem:mark`).
-- Use any items from plugins supporting Mimic as a texture for mark item.
+- Get mark item via Mimic API or command. You can use item `markitem:mark` everywhere where Mimic is supported
+- Use any items from plugins supporting Mimic as a texture for mark item and in `allowed` and `denied` patterns
 
 ### More reliable marks
 
