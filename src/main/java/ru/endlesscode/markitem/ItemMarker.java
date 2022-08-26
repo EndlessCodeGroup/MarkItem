@@ -18,7 +18,7 @@ class ItemMarker {
     private final List<Pattern> allowedPatterns;
     private final List<Pattern> deniedPatterns;
 
-    private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
+    private static final NamespacedKey KEY_MARKED = MarkItemPlugin.namespacedKey("markitem_marked");
 
     ItemMarker(Config config, BukkitItemsRegistry itemsRegistry) {
         this.itemsRegistry = itemsRegistry;

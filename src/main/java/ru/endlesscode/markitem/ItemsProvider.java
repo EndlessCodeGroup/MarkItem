@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 class ItemsProvider {
 
-    private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
+    private static final NamespacedKey KEY_MARK = MarkItemPlugin.namespacedKey("mark");
 
     private final Config config;
     private final BukkitItemsRegistry itemsRegistry;

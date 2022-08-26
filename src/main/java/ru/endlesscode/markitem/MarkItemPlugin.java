@@ -11,9 +11,9 @@ import ru.endlesscode.mimic.Mimic;
 import ru.endlesscode.mimic.MimicApiLevel;
 import ru.endlesscode.mimic.items.BukkitItemsRegistry;
 
-public class MarkItem extends JavaPlugin {
+public class MarkItemPlugin extends JavaPlugin {
 
-    private static MarkItem instance;
+    private static MarkItemPlugin instance;
 
     private CommandExecutor commandExecutor;
 

@@ -23,6 +23,7 @@ bukkit {
     }
 
     meta {
+        main.set("$group.MarkItemPlugin")
         name.set("MarkItem")
         authors.addAll("osipxd", "Dereku")
         apiVersion.set("1.14")

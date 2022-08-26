@@ -22,7 +22,7 @@ public class CraftingItemMarker implements Listener {
 
     private final ItemMarker marker;
 
-    private static final NamespacedKey KEY_RECIPE = MarkItem.namespacedKey("recipe");
+    private static final NamespacedKey KEY_RECIPE = MarkItemPlugin.namespacedKey("recipe");
 
     public CraftingItemMarker(@NotNull ItemMarker marker) {
         this.marker = marker;
