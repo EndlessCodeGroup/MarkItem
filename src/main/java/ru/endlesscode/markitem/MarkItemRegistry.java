@@ -40,7 +40,7 @@ class MarkItemRegistry implements BukkitItemsRegistry {
     @Nullable
     @Override
     public String getItemId(@NotNull ItemStack item) {
-        return ItemMarker.isMark(item) ? MARK_ID : null;
+        return ItemsProvider.isMark(item) ? MARK_ID : null;
     }
 
     @Override

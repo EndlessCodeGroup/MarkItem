@@ -10,8 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Items;
 import ru.endlesscode.markitem.util.Log;
@@ -21,70 +19,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ItemMarker implements Listener {
-    private final ItemStack mark;
-    private final List<String> markText;
+import static ru.endlesscode.markitem.ItemsProvider.isMark;
 
-    private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
+public class ItemMarker implements Listener {
+    private final List<String> markText;
+    private final Material[] allowedMaterials;
+
     private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
     private static final NamespacedKey KEY_RECIPE = MarkItem.namespacedKey("recipe");
 
     public ItemMarker(@NotNull Config config) {
         markText = config.getMarkText();
-        String[] textures = config.getMarkTexture().split(":");
-        Material textureType = Material.getMaterial(textures[0]);
-
-        if (textureType == null) {
-            Log.w("Material {0} not found", textures[0]);
-            this.mark = new ItemStack(Material.AIR);
-            return;
-        }
-
-        ItemStack item = new ItemStack(textureType);
-
-        if (textures.length == 2) {
-            try {
-                ItemMeta meta = item.getItemMeta();
-                if (meta instanceof Damageable) {
-                    ((Damageable) meta).setDamage(Integer.parseInt(textures[1], 0));
-                    item.setItemMeta(meta);
-                } else {
-                    Log.w("Material {0} is not damageable", textures[0]);
-                }
-            } catch (NumberFormatException e) {
-                Log.w("{0} is not a number", textures[1]);
-            }
-        }
-
-        Items.editItemMeta(item, im -> {
-            im.setDisplayName(config.getMarkName());
-            im.setLore(config.getMarkLore());
-        });
-
-        Items.addFlag(item, KEY_MARK);
-        this.mark = item;
-
-        ItemStack recipeItem = new ItemStack(mark.getType());
-        Items.editItemMeta(recipeItem, im -> {
-            im.setDisplayName(config.getRecipeTitle());
-            im.setLore(config.getRecipeDescription());
-        });
-        addRecipe(recipeItem, config.getAllowed(), config.getDenied());
+        allowedMaterials = Arrays.stream(Material.values())
+                .filter(Material::isItem)
+                .filter(material -> anyMatch(config.getAllowed(), material))
+                .filter(material -> noneMatch(config.getDenied(), material))
+                .toArray(Material[]::new);
     }
 
-    private void addRecipe(ItemStack result, List<Pattern> allowPatterns, List<Pattern> denyPatterns) {
-        Material[] materials = Arrays.stream(Material.values())
-                .filter(Material::isItem)
-                .filter(material -> anyMatch(allowPatterns, material))
-                .filter(material -> noneMatch(denyPatterns, material))
-                .toArray(Material[]::new);
-
-        ShapelessRecipe recipe = new ShapelessRecipe(KEY_RECIPE, result)
-                .addIngredient(mark.getType())
-                .addIngredient(new RecipeChoice.MaterialChoice(materials));
+    void registerRecipe(@NotNull ItemsProvider itemsProvider) {
+        ShapelessRecipe recipe = new ShapelessRecipe(KEY_RECIPE, itemsProvider.getRecipeItem())
+                .addIngredient(itemsProvider.getMark().getType())
+                .addIngredient(new RecipeChoice.MaterialChoice(allowedMaterials));
 
         if (Bukkit.addRecipe(recipe)) {
-            Log.i("Added marked item recipe for {0} material(s)", materials.length);
+            Log.i("Added marked item recipe for {0} material(s)", allowedMaterials.length);
         } else {
             Log.w("Marked item recipe wasn't added for some reason");
         }
@@ -113,10 +72,6 @@ public class ItemMarker implements Listener {
 
     public static boolean itemIsMarked(@NotNull ItemStack item) {
         return Items.hasFlag(item, KEY_MARKED);
-    }
-
-    public ItemStack getMark() {
-        return this.mark;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -152,9 +107,5 @@ public class ItemMarker implements Listener {
     private boolean isMarkedItemRecipe(Recipe recipe) {
         if (!(recipe instanceof ShapelessRecipe)) return false;
         return KEY_RECIPE.equals(((ShapelessRecipe) recipe).getKey());
-    }
-
-    static boolean isMark(@NotNull ItemStack itemStack) {
-        return Items.hasFlag(itemStack, KEY_MARK);
     }
 }

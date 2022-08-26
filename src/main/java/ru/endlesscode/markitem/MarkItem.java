@@ -40,13 +40,16 @@ public class MarkItem extends JavaPlugin {
             return;
         }
 
-        ItemsProvider itemsProvider = new ItemsProvider(config, Mimic.getInstance().getItemsRegistry());
-        ItemMarker itemMarker = new ItemMarker(config);
+        final ItemMarker itemMarker = new ItemMarker(config);
         getServer().getPluginManager().registerEvents(itemMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
 
+        final ItemsProvider itemsProvider = new ItemsProvider(config, Mimic.getInstance().getItemsRegistry());
         hookMimic(itemsProvider);
         commandExecutor = new CommandExecutor(itemsProvider);
+
+        // Register recipe when all Mimic registries will be available
+        getServer().getScheduler().runTaskLater(this, () -> itemMarker.registerRecipe(itemsProvider), 1L);
     }
 
     private boolean checkMimicEnabled() {

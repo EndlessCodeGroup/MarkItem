@@ -1,5 +1,6 @@
 package ru.endlesscode.markitem;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,8 @@ import java.util.Objects;
  * Creates items required for plugin: mark item and recipe item.
  */
 class ItemsProvider {
+
+    private static final NamespacedKey KEY_MARK = MarkItem.namespacedKey("mark");
 
     private final Config config;
     private final BukkitItemsRegistry itemsRegistry;
@@ -38,8 +41,13 @@ class ItemsProvider {
             im.setDisplayName(config.getMarkName());
             im.setLore(config.getMarkLore());
         });
+        Items.addFlag(result, KEY_MARK);
 
         return result;
+    }
+
+    static boolean isMark(@NotNull ItemStack itemStack) {
+        return Items.hasFlag(itemStack, KEY_MARK);
     }
 
     synchronized @NotNull ItemStack getRecipeItem() {
