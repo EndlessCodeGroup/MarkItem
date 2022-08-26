@@ -14,64 +14,30 @@ import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Items;
 import ru.endlesscode.markitem.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import static ru.endlesscode.markitem.ItemsProvider.isMark;
 
 public class CraftingItemMarker implements Listener {
-    private final List<String> markText;
-    private final Material[] allowedMaterials;
 
-    private static final NamespacedKey KEY_MARKED = MarkItem.namespacedKey("markitem_marked");
+    private final ItemMarker marker;
+
     private static final NamespacedKey KEY_RECIPE = MarkItem.namespacedKey("recipe");
 
-    public CraftingItemMarker(@NotNull Config config) {
-        markText = config.getMarkText();
-        allowedMaterials = Arrays.stream(Material.values())
-                .filter(Material::isItem)
-                .filter(material -> anyMatch(config.getAllowed(), material))
-                .filter(material -> noneMatch(config.getDenied(), material))
-                .toArray(Material[]::new);
+    public CraftingItemMarker(@NotNull ItemMarker marker) {
+        this.marker = marker;
     }
 
     void registerRecipe(@NotNull ItemsProvider itemsProvider) {
         ShapelessRecipe recipe = new ShapelessRecipe(KEY_RECIPE, itemsProvider.getRecipeItem())
                 .addIngredient(itemsProvider.getMark().getType())
-                .addIngredient(new RecipeChoice.MaterialChoice(allowedMaterials));
+                .addIngredient(new RecipeChoice.MaterialChoice(Material.values()));
 
         if (Bukkit.addRecipe(recipe)) {
-            Log.i("Added marked item recipe for {0} material(s)", allowedMaterials.length);
+            Log.i("Marked item recipe added successfully!");
         } else {
             Log.w("Marked item recipe wasn't added for some reason");
         }
-    }
-
-    private boolean noneMatch(List<Pattern> patterns, Material material) {
-        return !anyMatch(patterns, material);
-    }
-
-    private boolean anyMatch(List<Pattern> patterns, Material material) {
-        return patterns.stream().anyMatch(pattern -> pattern.matcher(material.name()).matches());
-    }
-
-    private ItemStack addMarkToItem(ItemStack item) {
-        if (!itemIsMarked(item)) {
-            Items.editItemMeta(item, im -> {
-                List<String> lore = im.getLore() != null ? im.getLore() : new ArrayList<>();
-                lore.addAll(this.markText);
-                im.setLore(lore);
-            });
-            Items.addFlag(item, KEY_MARKED);
-        }
-
-        return item;
-    }
-
-    public static boolean itemIsMarked(@NotNull ItemStack item) {
-        return Items.hasFlag(item, KEY_MARKED);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -95,13 +61,11 @@ public class CraftingItemMarker implements Listener {
             itemToMark = matrix[0];
         }
 
-        // We don't want to mark the same item twice
-        if (itemToMark == null || itemIsMarked(itemToMark)) {
-            event.getInventory().setResult(null);
-        } else {
-            ItemStack result = itemToMark.clone();
-            event.getInventory().setResult(addMarkToItem(result));
+        ItemStack markedItem = marker.tryToMarkItem(itemToMark);
+        if (markedItem != null) {
+            markedItem.setAmount(event.getRecipe().getResult().getAmount());
         }
+        event.getInventory().setResult(markedItem);
     }
 
     private boolean isMarkedItemRecipe(Recipe recipe) {
