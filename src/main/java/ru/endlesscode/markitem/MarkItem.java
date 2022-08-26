@@ -12,11 +12,8 @@ import ru.endlesscode.mimic.MimicApiLevel;
 public class MarkItem extends JavaPlugin {
 
     private static MarkItem instance;
-    private static ItemMarker itemMarker;
 
-    public static ItemMarker getItemMarker() {
-        return itemMarker;
-    }
+    private CommandExecutor commandExecutor;
 
     @NotNull
     public static NamespacedKey namespacedKey(@NotNull String key) {
@@ -43,11 +40,13 @@ public class MarkItem extends JavaPlugin {
             return;
         }
 
-        itemMarker = new ItemMarker(config);
+        ItemsProvider itemsProvider = new ItemsProvider(config, Mimic.getInstance().getItemsRegistry());
+        ItemMarker itemMarker = new ItemMarker(config);
         getServer().getPluginManager().registerEvents(itemMarker, this);
         getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
 
-        hookMimic();
+        hookMimic(itemsProvider);
+        commandExecutor = new CommandExecutor(itemsProvider);
     }
 
     private boolean checkMimicEnabled() {
@@ -64,8 +63,8 @@ public class MarkItem extends JavaPlugin {
         return true;
     }
 
-    private void hookMimic() {
-        MarkItemRegistry registry = new MarkItemRegistry(itemMarker.getMark());
+    private void hookMimic(ItemsProvider itemsProvider) {
+        MarkItemRegistry registry = new MarkItemRegistry(itemsProvider);
         Mimic.getInstance().registerItemsRegistry(registry, MimicApiLevel.CURRENT, this);
     }
 
@@ -77,9 +76,9 @@ public class MarkItem extends JavaPlugin {
             String[] args
     ) {
         if (args.length == 0) {
-            CommandExecutor.giveMark(sender);
+            commandExecutor.giveMark(sender);
         } else {
-            CommandExecutor.giveMark(sender, args[0]);
+            commandExecutor.giveMark(sender, args[0]);
         }
 
         return true;

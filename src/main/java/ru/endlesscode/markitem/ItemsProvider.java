@@ -28,7 +28,7 @@ class ItemsProvider {
 
     synchronized @NotNull ItemStack getMark() {
         if (mark == null) mark = createMark();
-        return mark;
+        return mark.clone();
     }
 
     private @NotNull ItemStack createMark() {
@@ -44,7 +44,7 @@ class ItemsProvider {
 
     synchronized @NotNull ItemStack getRecipeItem() {
         if (recipeItem == null) recipeItem = createRecipeItem();
-        return recipeItem;
+        return recipeItem.clone();
     }
 
     private @NotNull ItemStack createRecipeItem() {

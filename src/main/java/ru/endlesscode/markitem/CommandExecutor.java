@@ -4,28 +4,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 class CommandExecutor {
-    public static void giveMark(CommandSender sender) {
+
+    private final ItemsProvider itemsProvider;
+
+    CommandExecutor(ItemsProvider itemsProvider) {
+        this.itemsProvider = itemsProvider;
+    }
+
+    void giveMark(CommandSender sender) {
         if (sender instanceof Player) {
             giveMark((Player) sender);
         } else {
-            sender.sendMessage("It is player side command");
+            sender.sendMessage("This command should be executed by player");
         }
     }
 
 
-    public static void giveMark(CommandSender sender, String name) {
+    void giveMark(CommandSender sender, String name) {
         Player player = sender.getServer().getPlayer(name);
 
         if (player == null) {
             sender.sendMessage("Player " + name + " not found.");
         } else {
             giveMark(player);
+            sender.sendMessage("Gave mark to " + name);
         }
     }
 
-    private static void giveMark(Player player) {
+    private void giveMark(Player player) {
         if (player.getInventory().firstEmpty() != -1) {
-            player.getInventory().addItem(MarkItem.getItemMarker().getMark());
+            player.getInventory().addItem(itemsProvider.getMark());
         }
     }
 }

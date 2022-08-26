@@ -15,10 +15,10 @@ class MarkItemRegistry implements BukkitItemsRegistry {
 
     static final String MARK_ID = "mark";
 
-    private final ItemStack markItem;
+    private final ItemsProvider itemsProvider;
 
-    MarkItemRegistry(ItemStack markItem) {
-        this.markItem = markItem;
+    MarkItemRegistry(ItemsProvider itemsProvider) {
+        this.itemsProvider = itemsProvider;
     }
 
     @NotNull
@@ -32,7 +32,7 @@ class MarkItemRegistry implements BukkitItemsRegistry {
     public ItemStack getItem(@NotNull String itemId, @Nullable Object payload, int amount) {
         if (!itemId.equals(MARK_ID)) return null;
 
-        ItemStack mark = markItem.clone();
+        ItemStack mark = itemsProvider.getMark();
         mark.setAmount(amount);
         return mark;
     }
