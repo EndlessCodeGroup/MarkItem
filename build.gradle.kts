@@ -32,4 +32,5 @@ bukkit {
 dependencies {
     compileOnly(spigotApi)
     compileOnly("org.jetbrains:annotations:23.0.0")
+    compileOnly("ru.endlesscode.mimic:mimic-bukkit-api:0.8.0")
 }

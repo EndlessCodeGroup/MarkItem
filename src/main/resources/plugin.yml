@@ -1,3 +1,5 @@
+softdepend:
+   - Mimic
 commands:
    markitem:
       description: MarkItem command

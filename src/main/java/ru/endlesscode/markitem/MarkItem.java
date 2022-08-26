@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ru.endlesscode.markitem.util.Log;
+import ru.endlesscode.mimic.MimicApiLevel;
 
 public class MarkItem extends JavaPlugin {
 
@@ -30,14 +31,34 @@ public class MarkItem extends JavaPlugin {
         Config config = new Config(this.getConfig());
 
         if (!config.isEnabled()) {
-            this.getLogger().warning("Plugin is not enabled.");
-            this.setEnabled(false);
+            getLogger().warning("Plugin is not enabled.");
+            setEnabled(false);
+            return;
+        }
+
+        if (!checkMimicEnabled()) {
+            getLogger().severe("Download latest version here: https://www.spigotmc.org/resources/82515/");
+            setEnabled(false);
             return;
         }
 
         itemMarker = new ItemMarker(config);
-        this.getServer().getPluginManager().registerEvents(itemMarker, this);
-        this.getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
+        getServer().getPluginManager().registerEvents(itemMarker, this);
+        getServer().getPluginManager().registerEvents(new PlayerInventoryKeeper(), this);
+    }
+
+    private boolean checkMimicEnabled() {
+        if (!getServer().getPluginManager().isPluginEnabled("Mimic")) {
+            getLogger().severe("Mimic is required for the plugin!");
+            return false;
+        }
+
+        if (!MimicApiLevel.checkApiLevel(MimicApiLevel.VERSION_0_7)) {
+            getLogger().severe("Required at least Mimic 0.7!");
+            return false;
+        }
+
+        return true;
     }
 
     @Override
