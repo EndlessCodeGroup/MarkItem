@@ -1,14 +1,20 @@
 enabled: true
+
+# Configurations for the item to be used as a mark
 mark:
-  texture: RED_DYE
+  # Here you can use any item supported by Mimic
+  texture: red_dye
   name: "&9Mark"
   lore:
     - "&e&oYou can mark your items to keep it on death"
+  # This text will be added to marked items
   text:
     - "&9- Item is marked"
 
 # Recipe will be shown to player in recipe book
 recipe:
+  # Here you can use any item supported by Mimic
+  texture: red_dye
   title: "Marked Item"
   description:
     - "You can mark your items to keep it on death"

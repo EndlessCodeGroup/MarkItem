@@ -13,7 +13,7 @@ import java.util.Collections;
  */
 class MarkItemRegistry implements BukkitItemsRegistry {
 
-    private static final String MARK_ID = "mark";
+    static final String MARK_ID = "mark";
 
     private final ItemStack markItem;
 

@@ -31,6 +31,7 @@ You can configure title and description of the "Marked Item" recipe that will be
 
 ```yaml
 recipe:
+  texture: red_dye
   title: "Marked Item"
   description:
     - "You can mark your items to keep it on death"

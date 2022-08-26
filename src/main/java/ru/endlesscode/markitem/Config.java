@@ -18,6 +18,7 @@ class Config {
     private List<String> markText = Collections.emptyList();
     private List<String> markLore = Collections.emptyList();
 
+    private String recipeTexture = "";
     private String recipeTitle = "";
     private List<String> recipeDescription = Collections.emptyList();
 
@@ -39,6 +40,7 @@ class Config {
         markText = getColorizedStringList("mark.text");
         markLore = getColorizedStringList("mark.lore");
 
+        recipeTexture = getColorizedString("recipe.texture", markTexture);
         recipeTitle = getColorizedString("recipe.title");
         recipeDescription = getColorizedStringList("recipe.description");
 
@@ -47,7 +49,11 @@ class Config {
     }
 
     private String getColorizedString(String path) {
-        return Strings.colorize(configuration.getString(path, ""));
+        return getColorizedString(path, "");
+    }
+
+    private String getColorizedString(String path, String def) {
+        return Strings.colorize(configuration.getString(path, def));
     }
 
     private List<String> getColorizedStringList(String path) {
@@ -82,6 +88,10 @@ class Config {
 
     public List<String> getMarkLore() {
         return markLore;
+    }
+
+    public String getRecipeTexture() {
+        return recipeTexture;
     }
 
     public String getRecipeTitle() {
