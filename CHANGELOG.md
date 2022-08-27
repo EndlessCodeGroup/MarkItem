@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [v1.0-rc1] (2022-08-27)
+
 ### Mimic
 
 This version brings integration with Mimic and **makes it required** for MarkItem.
@@ -42,4 +44,5 @@ recipe:
 - Fixed the issue when plugin may erase armor kept by other plugin
 - Fixed the problem when some items can't be marked
 
-[Unreleased]: https://github.com/EndlessCodeGroup/MarkItem/compare/v0.5...master
+[Unreleased]: https://github.com/EndlessCodeGroup/MarkItem/compare/v1.0-rc1...master
+[v1.0-rc1]: https://github.com/EndlessCodeGroup/MarkItem/compare/v0.5...v1.0-rc1

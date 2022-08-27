@@ -7,7 +7,7 @@ plugins {
 
 group = "ru.endlesscode.markitem"
 description = "Mark your items"
-version = "0.5"
+version = "1.0-rc1"
 
 repositories {
     mavenCentral()
