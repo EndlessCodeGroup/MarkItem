@@ -24,11 +24,11 @@ public class Items {
     }
 
     public static void addFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta != null) {
-            itemMeta.getPersistentDataContainer().set(flag, BYTE, (byte) 1);
-            itemStack.setItemMeta(itemMeta);
-        }
+        editItemMeta(itemStack, im -> im.getPersistentDataContainer().set(flag, BYTE, (byte) 1));
+    }
+
+    public static void removeFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {
+        editItemMeta(itemStack, im -> im.getPersistentDataContainer().remove(flag));
     }
 
     public static boolean hasFlag(@NotNull ItemStack itemStack, @NotNull NamespacedKey flag) {

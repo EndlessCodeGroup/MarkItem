@@ -9,12 +9,15 @@ import ru.endlesscode.markitem.util.Items;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.endlesscode.markitem.util.Items.*;
+
 class ItemMarker {
 
     private final ItemsPatternMatcher matcher;
     private final List<String> markText;
 
-    private static final NamespacedKey KEY_MARKED = MarkItemPlugin.namespacedKey("markitem_marked");
+    private static final NamespacedKey KEY_MARKED = MarkItemPlugin.namespacedKey("marked");
+    private static final NamespacedKey KEY_MARKED_LEGACY = MarkItemPlugin.namespacedKey("markitem_marked");
 
     ItemMarker(ItemsPatternMatcher matcher, List<String> markText) {
         this.matcher = matcher;
@@ -36,12 +39,22 @@ class ItemMarker {
             lore.addAll(this.markText);
             im.setLore(lore);
         });
-        Items.addFlag(markedItem, KEY_MARKED);
+        addFlag(markedItem, KEY_MARKED);
 
         return markedItem;
     }
 
     static boolean itemIsMarked(@NotNull ItemStack item) {
-        return Items.hasFlag(item, KEY_MARKED);
+        return hasFlag(item, KEY_MARKED) || migrateLegacyFlag(item);
+    }
+
+    // TODO: Remove after v1.1
+    private static boolean migrateLegacyFlag(ItemStack item) {
+        if (hasFlag(item, KEY_MARKED_LEGACY)) {
+            addFlag(item, KEY_MARKED);
+            removeFlag(item, KEY_MARKED_LEGACY);
+            return true;
+        }
+        return false;
     }
 }
